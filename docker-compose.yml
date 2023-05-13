@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+
+  auth_service_api:
+    build: .
+    env_file: .env
+    environment:
+      USERS_DB_URL: ${USERS_DB_URL:-postgres://admin:admin@auth_service_postgres:5432/users_db?sslmode=disable}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth_db
+
+  auth_db:
+    image: postgres:latest
+    container_name: auth_service_postgres
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: users_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
