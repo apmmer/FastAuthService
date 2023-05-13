@@ -19,3 +19,9 @@
 
 # Go workspace file
 go.work
+
+# Trash files
+trash/
+
+# Other dev files
+.env
