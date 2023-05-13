@@ -1,0 +1,39 @@
+basePath: /
+definitions:
+  handlers.HealthCheckResponse:
+    properties:
+      status:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API server for auth stuff
+  title: Auth Service API
+  version: v.1.0.0
+paths:
+  /api/healthcheck:
+    get:
+      consumes:
+      - application/json
+      description: Get server status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.HealthCheckResponse'
+        "403":
+          description: forbidden
+          schema:
+            type: string
+      summary: Show server status
+      tags:
+      - health
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
