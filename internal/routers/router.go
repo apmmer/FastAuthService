@@ -16,6 +16,7 @@ func GetRouter() http.Handler {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/healthcheck", handlers.HealthCheck).Methods("GET")
+	router.HandleFunc("/api/users", handlers.RegisterUser).Methods("POST")
 
 	// Swagger endpoint
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)

@@ -2,8 +2,17 @@ package models
 
 import "time"
 
+// User godoc
+// User represents user data
+// @Schema
+// @ID User
+// @Required username email password
+// @Property id integer "ID"
+// @Property username string "Username" minLength(1)
+// @Property email string "Email" format(email)
+// @Property password string "Password" minLength(1)
 type User struct {
-	ID uint `gorm:"primaryKey"`
+	ID uint `gorm:"primaryKey" json:"-"`
 
 	Username string `json:"username"`
 
@@ -11,9 +20,9 @@ type User struct {
 
 	Password string `json:"password,omitempty"`
 
-	CreatedAt time.Time
+	CreatedAt time.Time `json:"-"`
 
-	UpdatedAt time.Time
+	UpdatedAt time.Time `json:"-"`
 
-	DeletedAt *time.Time `sql:"index"`
+	DeletedAt *time.Time `sql:"index" json:"-"`
 }

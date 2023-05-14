@@ -16,7 +16,6 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-
 func main() {
 
 	// database.InitDB(configs.MainSettings.UsersDBURL)
