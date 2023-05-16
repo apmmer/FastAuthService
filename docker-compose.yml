@@ -25,7 +25,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/dev_init.sql:/docker-entrypoint-initdb.d/dev_init.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "admin", "-d", "users_db"]
       interval: 5s
