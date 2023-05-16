@@ -13,8 +13,9 @@ func GetEnv(key, fallback string) string {
 }
 
 type MainSettingsScheme struct {
-	UsersDBURL  string
-	ProjectPath string
+	UsersDBURL     string
+	ProjectPath    string
+	UsersTableName string
 }
 
 func GetSettings() *MainSettingsScheme {
@@ -23,7 +24,8 @@ func GetSettings() *MainSettingsScheme {
 			"USERS_DB_URL",
 			"postgres://admin:admin@auth_service_postgres:5432/users_db?sslmode=disable",
 		),
-		ProjectPath: "/app",
+		ProjectPath:    "/app",
+		UsersTableName: "users",
 	}
 }
 

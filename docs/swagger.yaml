@@ -7,11 +7,19 @@ definitions:
     type: object
   models.User:
     properties:
+      createdAt:
+        type: string
+      deletedAt:
+        type: string
       email:
         type: string
+      id:
+        type: integer
       password:
         type: string
-      username:
+      screenName:
+        type: string
+      updatedAt:
         type: string
     type: object
   schemas.CreateUserRequest:
@@ -19,9 +27,15 @@ definitions:
       email:
         type: string
       password:
+        minLength: 7
         type: string
-      username:
+      screen_name:
+        minLength: 4
         type: string
+    required:
+    - email
+    - password
+    - screen_name
     type: object
 host: localhost:8080
 info:
@@ -53,7 +67,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Register a new user with email, username, and password
+      description: Register a new user with email, screen_name, and password
       parameters:
       - description: Create user
         in: body

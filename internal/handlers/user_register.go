@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"AuthService/internal/models"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
 	"encoding/json"
@@ -11,7 +10,7 @@ import (
 
 // RegisterUser godoc
 // @Summary Register new user
-// @Description Register a new user with email, username, and password
+// @Description Register a new user with email, screen_name, and password
 // @Tags users
 // @Accept  json
 // @Produce  json
@@ -31,36 +30,21 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.Println("Decoded to CreateUserRequest")
 
-	// Validation of user data
-	if userReq.Email == "" || userReq.Username == "" || userReq.Password == "" {
-		http.Error(w, "Invalid user data", http.StatusBadRequest)
+	// Validation
+	err = userReq.Validate()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
-	user := &models.User{
-		Username: userReq.Username,
-		Email:    userReq.Email,
-		Password: userReq.Password,
-	}
-
-	// Saving the user in the database
-	newUser, err := user_repo.SaveUserToDB(user)
+	// Saving the user in the database & prepare user response
+	userRes, err := user_repo.CreateUser(userReq)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Prepare user response
-	userRes := models.User{
-		ID:        newUser.ID,
-		Username:  newUser.Username,
-		Email:     newUser.Email,
-		CreatedAt: newUser.CreatedAt,
-		UpdatedAt: newUser.UpdatedAt,
-		DeletedAt: newUser.DeletedAt,
-	}
-
 	// Setting the status 201
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

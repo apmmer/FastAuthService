@@ -47,7 +47,7 @@ const docTemplate = `{
         },
         "/api/users": {
             "post": {
-                "description": "Register a new user with email, username, and password",
+                "description": "Register a new user with email, screen_name, and password",
                 "consumes": [
                     "application/json"
                 ],
@@ -106,28 +106,47 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
+                },
+                "id": {
+                    "type": "integer"
                 },
                 "password": {
                     "type": "string"
                 },
-                "username": {
+                "screenName": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
         },
         "schemas.CreateUserRequest": {
             "type": "object",
+            "required": [
+                "email",
+                "password",
+                "screen_name"
+            ],
             "properties": {
                 "email": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 7
                 },
-                "username": {
-                    "type": "string"
+                "screen_name": {
+                    "type": "string",
+                    "minLength": 4
                 }
             }
         }

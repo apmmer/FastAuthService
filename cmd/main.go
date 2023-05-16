@@ -1,6 +1,8 @@
 package main
 
 import (
+	"AuthService/configs"
+	"AuthService/database"
 	"AuthService/internal/routers"
 	"log"
 	"net/http"
@@ -18,7 +20,7 @@ import (
 // @name Authorization
 func main() {
 
-	// database.InitDB(configs.MainSettings.UsersDBURL)
+	database.InitDB(configs.MainSettings.UsersDBURL)
 	router := routers.GetRouter()
 
 	log.Println("AuthService is running on :8080")
