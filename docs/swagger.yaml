@@ -1,12 +1,9 @@
 basePath: /
 definitions:
-  handlers.HealthCheckResponse:
-    properties:
-      status:
-        type: string
-    type: object
   models.User:
     properties:
+      companyId:
+        type: integer
       createdAt:
         type: string
       deletedAt:
@@ -17,25 +14,57 @@ definitions:
         type: integer
       password:
         type: string
+      rank:
+        type: integer
       screenName:
         type: string
       updatedAt:
         type: string
     type: object
   schemas.CreateUserRequest:
+    description: This request includes the necessary details to create a new user.
     properties:
+      company_id:
+        description: |-
+          The ID of the company to associate with the new user. This field is optional and must be greater than 0 if provided.
+          @Min 0
+          @Example 1
+        type: integer
       email:
+        description: |-
+          The email address of the new user. This field is required and must be a valid email address.
+          @Format email
+          @Example user@example.com
         type: string
       password:
+        description: |-
+          The password for the new user. This field is required and must contain at least 7 characters.
+          @MinLength 7
+          @Example 1234567
         minLength: 7
         type: string
+      rank:
+        description: |-
+          The rank of the new user. This field is optional and must be greater than 0 if provided.
+          @Min 0
+          @Example 1
+        type: integer
       screen_name:
+        description: |-
+          The desired username for the new user. This field is required and must contain at least 4 characters.
+          @MinLength 4
+          @Example exampleUser
         minLength: 4
         type: string
     required:
     - email
     - password
     - screen_name
+    type: object
+  schemas.HealthCheckResponse:
+    properties:
+      status:
+        type: string
     type: object
 host: localhost:8080
 info:
@@ -55,7 +84,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.HealthCheckResponse'
+            $ref: '#/definitions/schemas.HealthCheckResponse'
         "403":
           description: forbidden
           schema:

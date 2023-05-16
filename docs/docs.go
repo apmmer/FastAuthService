@@ -33,7 +33,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.HealthCheckResponse"
+                            "$ref": "#/definitions/schemas.HealthCheckResponse"
                         }
                     },
                     "403": {
@@ -95,17 +95,12 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handlers.HealthCheckResponse": {
-            "type": "object",
-            "properties": {
-                "status": {
-                    "type": "string"
-                }
-            }
-        },
         "models.User": {
             "type": "object",
             "properties": {
+                "companyId": {
+                    "type": "integer"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -121,6 +116,9 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
+                "rank": {
+                    "type": "integer"
+                },
                 "screenName": {
                     "type": "string"
                 },
@@ -130,6 +128,7 @@ const docTemplate = `{
             }
         },
         "schemas.CreateUserRequest": {
+            "description": "This request includes the necessary details to create a new user.",
             "type": "object",
             "required": [
                 "email",
@@ -137,16 +136,35 @@ const docTemplate = `{
                 "screen_name"
             ],
             "properties": {
+                "company_id": {
+                    "description": "The ID of the company to associate with the new user. This field is optional and must be greater than 0 if provided.\n@Min 0\n@Example 1",
+                    "type": "integer"
+                },
                 "email": {
+                    "description": "The email address of the new user. This field is required and must be a valid email address.\n@Format email\n@Example user@example.com",
                     "type": "string"
                 },
                 "password": {
+                    "description": "The password for the new user. This field is required and must contain at least 7 characters.\n@MinLength 7\n@Example 1234567",
                     "type": "string",
                     "minLength": 7
                 },
+                "rank": {
+                    "description": "The rank of the new user. This field is optional and must be greater than 0 if provided.\n@Min 0\n@Example 1",
+                    "type": "integer"
+                },
                 "screen_name": {
+                    "description": "The desired username for the new user. This field is required and must contain at least 4 characters.\n@MinLength 4\n@Example exampleUser",
                     "type": "string",
                     "minLength": 4
+                }
+            }
+        },
+        "schemas.HealthCheckResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string"
                 }
             }
         }
