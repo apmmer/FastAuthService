@@ -28,6 +28,6 @@ services:
       - ./database/dev_init.sql:/docker-entrypoint-initdb.d/dev_init.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "admin", "-d", "users_db"]
-      interval: 5s
+      interval: 2s
       timeout: 1s
-      retries: 3
+      retries: 5

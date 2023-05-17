@@ -32,6 +32,7 @@ func GetManyUsers(params schemas.ListParams) ([]models.User, error) {
 		offset,
 		sortingField,
 		sortingDirection,
+		nil,
 	)
 	if err != nil {
 		return nil, err

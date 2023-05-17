@@ -4,6 +4,7 @@ import (
 	"AuthService/database"
 	"context"
 	"fmt"
+	"strings"
 )
 
 // CreateOne inserts a new record into the specified table with the provided data
@@ -24,8 +25,33 @@ func CreateOne(tableName string, fields string, values string) (int, error) {
 	return id, nil
 }
 
-func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderingDirection *string) ([]map[string]interface{}, error) {
+func ParseSQLFilters(filters *map[string]interface{}) (string, []interface{}, error) {
+	filterStr := ""
+	var args []interface{}
+
+	if filters != nil && len(*filters) > 0 {
+		for field, value := range *filters {
+			// Avoid SQL injection by using placeholders and passing values separately
+			filterStr += fmt.Sprintf(" %s = $%d AND", field, len(args)+1)
+			args = append(args, value)
+		}
+		filterStr = strings.TrimSuffix(filterStr, " AND") // Remove the trailing ' AND'
+	}
+
+	return filterStr, args, nil
+}
+
+func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderingDirection *string, filters *map[string]interface{}) ([]map[string]interface{}, error) {
 	sql := fmt.Sprintf("SELECT * FROM %s", tableName)
+
+	filterStr, args, err := ParseSQLFilters(filters)
+	if err != nil {
+		return nil, fmt.Errorf("could not parse filters: %v", err)
+	}
+
+	if filterStr != "" {
+		sql += " WHERE" + filterStr
+	}
 
 	if orderBy != nil {
 		sql += fmt.Sprintf(" ORDER BY %s", *orderBy)
@@ -42,7 +68,7 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 		sql += fmt.Sprintf(" OFFSET %d", *offset)
 	}
 
-	rows, err := database.Pool.Query(context.Background(), sql)
+	rows, err := database.Pool.Query(context.Background(), sql, args...)
 	if err != nil {
 		return nil, fmt.Errorf("could not get records from %s table: %v", tableName, err)
 	}
