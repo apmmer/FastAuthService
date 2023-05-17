@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"AuthService/configs"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,7 +30,7 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 		limitStr, offsetStr, sortStr,
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -41,8 +39,7 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	// Call GetManyUsers from the repo
 	users, err := user_repo.GetManyUsers(*params)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		HandleException(w, err)
 	}
 
 	log.Println("Successfully got result from user_repo.GetManyUsers")
@@ -52,14 +49,8 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Prepare response
-	if configs.MainSettings.Debug == "true" {
-		prettyJSON, err := json.MarshalIndent(users, "", "  ")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.Write(prettyJSON)
-	} else {
-		json.NewEncoder(w).Encode(users)
+	err = HandleJsonResponse(w, users)
+	if err != nil {
+		log.Println("Error while handling JSON response:", err)
 	}
 }

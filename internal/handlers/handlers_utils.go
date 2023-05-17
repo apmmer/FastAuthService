@@ -21,7 +21,7 @@ func HandleException(w http.ResponseWriter, err error) {
 		errorResponse(w, err.Error(), http.StatusNotFound)
 	case *exceptions.ErrMultipleEntries:
 		errorResponse(w, err.Error(), http.StatusNotAcceptable)
-	case *exceptions.ErrUnprocessableEntity:
+	case *exceptions.ErrInvalidEntity:
 		errorResponse(w, err.Error(), http.StatusUnprocessableEntity)
 	default:
 		log.Fatalf(err.Error())

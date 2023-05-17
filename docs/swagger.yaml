@@ -96,7 +96,7 @@ paths:
             type: string
       summary: Show server status
       tags:
-      - health
+      - Health
   /api/users:
     get:
       consumes:
@@ -126,7 +126,7 @@ paths:
             type: array
       summary: Get many users
       tags:
-      - users
+      - Users
     post:
       consumes:
       - application/json
@@ -157,7 +157,7 @@ paths:
             type: object
       summary: Register new user
       tags:
-      - users
+      - Users
   /api/users/{id}:
     get:
       description: Retrieve a user from the database by ID

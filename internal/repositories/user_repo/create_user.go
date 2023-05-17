@@ -2,6 +2,7 @@ package user_repo
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/exceptions"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/schemas"
@@ -26,7 +27,9 @@ func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 	// Converting fields values to string
 	fields, values, err := utils.MarshalToDBString(user)
 	if err != nil {
-		return nil, fmt.Errorf("failed to marshal user data: %v", err)
+		return nil, &exceptions.ErrInvalidEntity{
+			Message: fmt.Sprintf("failed to marshal user data: %v", err),
+		}
 	}
 
 	// Calling the CreateOne function from base_repo

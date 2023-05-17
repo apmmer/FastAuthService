@@ -42,13 +42,15 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Saving the user in the database & prepare user response
 	userRes, err := user_repo.CreateUser(userReq)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		HandleException(w, err)
 	}
 	// Setting the status 201
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 
 	// Sending the data of the created user to the client in JSON format
-	json.NewEncoder(w).Encode(userRes)
+	err = HandleJsonResponse(w, userRes)
+	if err != nil {
+		log.Println("Error while handling JSON response:", err)
+	}
 }

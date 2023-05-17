@@ -19,7 +19,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "health"
+                    "Health"
                 ],
                 "summary": "Show server status",
                 "responses": {
@@ -48,7 +48,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Get many users",
                 "parameters": [
@@ -92,7 +92,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Register new user",
                 "parameters": [
