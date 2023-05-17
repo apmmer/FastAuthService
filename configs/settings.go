@@ -16,6 +16,7 @@ type MainSettingsScheme struct {
 	UsersDBURL     string
 	ProjectPath    string
 	UsersTableName string
+	Debug          string
 }
 
 func GetSettings() *MainSettingsScheme {
@@ -26,6 +27,10 @@ func GetSettings() *MainSettingsScheme {
 		),
 		ProjectPath:    "/app",
 		UsersTableName: "users",
+		Debug: GetEnv(
+			"DEBUG",
+			"true",
+		),
 	}
 }
 

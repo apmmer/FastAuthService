@@ -1,7 +1,5 @@
 package schemas
 
-import "github.com/go-playground/validator/v10"
-
 // CreateUserRequest godoc
 // CreateUserRequest represents the request to create a new user.
 // @Schema(name="CreateUserRequest")
@@ -35,12 +33,6 @@ type CreateUserRequest struct {
 	Rank *int `json:"rank" validate:"omitempty,gt=0"`
 }
 
-var validate *validator.Validate
-
-func init() {
-	validate = validator.New()
-}
-
 func (c CreateUserRequest) Validate() error {
-	return validate.Struct(c)
+	return Validate(c)
 }

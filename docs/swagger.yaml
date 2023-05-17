@@ -93,6 +93,35 @@ paths:
       tags:
       - health
   /api/users:
+    get:
+      consumes:
+      - application/json
+      description: get many users based on pagination and sorting parameters
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: 'Sorting (format: field[direction])'
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+      summary: Get many users
+      tags:
+      - users
     post:
       consumes:
       - application/json
