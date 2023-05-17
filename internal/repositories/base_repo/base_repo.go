@@ -32,8 +32,8 @@ func ParseSQLFilters(filters *map[string]interface{}) (string, []interface{}, er
 	if filters != nil && len(*filters) > 0 {
 		for field, value := range *filters {
 			// Avoid SQL injection by using placeholders and passing values separately
-			filterStr += fmt.Sprintf(" %s = $%d AND", field, len(args)+1)
 			args = append(args, value)
+			filterStr += fmt.Sprintf(" %s = $%d AND", field, len(args))
 		}
 		filterStr = strings.TrimSuffix(filterStr, " AND") // Remove the trailing ' AND'
 	}
@@ -54,18 +54,23 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 	}
 
 	if orderBy != nil {
+		args = append(args, *orderBy)
 		sql += fmt.Sprintf(" ORDER BY %s", *orderBy)
+
 		if orderingDirection != nil {
-			sql += fmt.Sprintf(" %s", *orderingDirection)
+			args = append(args, *orderingDirection)
+			sql += fmt.Sprintf(" $%d", len(args))
 		}
 	}
 
 	if limit != nil {
-		sql += fmt.Sprintf(" LIMIT %d", *limit)
+		args = append(args, *limit)
+		sql += fmt.Sprintf(" LIMIT $%d", len(args))
 	}
 
 	if offset != nil {
-		sql += fmt.Sprintf(" OFFSET %d", *offset)
+		args = append(args, *offset)
+		sql += fmt.Sprintf(" OFFSET %d", len(args))
 	}
 
 	rows, err := database.Pool.Query(context.Background(), sql, args...)
