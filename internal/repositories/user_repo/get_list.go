@@ -8,7 +8,7 @@ import (
 	"AuthService/internal/utils"
 )
 
-func GetManyUsers(params schemas.GetManyRequestParams) ([]models.User, error) {
+func GetManyUsers(params schemas.ListParams) ([]models.User, error) {
 	var users []models.User
 
 	// Use the ParseSorting function to extract the sorting field and direction

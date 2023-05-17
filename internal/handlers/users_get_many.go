@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 )
 
 // GetManyUsers godoc
@@ -24,49 +23,28 @@ import (
 // @Router /api/users [get]
 func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to fetch many users.")
-	// Create GetManyRequestParams
-	var params schemas.GetManyRequestParams
 
-	// Get and set the limit if it exists
-	if limitStr := r.URL.Query().Get("limit"); limitStr != "" {
-		limit, err := strconv.Atoi(limitStr)
-		if err != nil {
-			http.Error(w, "Invalid limit parameter", http.StatusBadRequest)
-			return
-		}
-		params.Limit = &limit
-	}
+	limitStr := r.URL.Query().Get("limit")
+	offsetStr := r.URL.Query().Get("offset")
+	sortStr := r.URL.Query().Get("sort")
 
-	// Get and set the offset if it exists
-	if offsetStr := r.URL.Query().Get("offset"); offsetStr != "" {
-		offset, err := strconv.Atoi(offsetStr)
-		if err != nil {
-			http.Error(w, "Invalid offset parameter", http.StatusBadRequest)
-			return
-		}
-		params.Offset = &offset
-	}
-
-	// Get and set the sort if it exists
-	if sort := r.URL.Query().Get("sort"); sort != "" {
-		params.Sorting = &sort
-	}
-
-	// Validate params
-	err := params.Validate()
+	params, err := schemas.GetValidatedListParams(
+		limitStr, offsetStr, sortStr,
+	)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	log_string := fmt.Sprintf("%d", params)
+	log_string := fmt.Sprintf("%d", *params)
 	log.Println("Ready to call repository, params = ." + log_string)
 	// Call GetManyUsers from the repo
-	users, err := user_repo.GetManyUsers(params)
+	users, err := user_repo.GetManyUsers(*params)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	log.Println("Successfully got result from user_repo.GetManyUsers")
 
 	// Setting the status 200

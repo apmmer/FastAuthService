@@ -1,29 +1,14 @@
-package schemas
+package utils
 
 import (
+	"AuthService/internal/schemas"
 	"fmt"
 	"strconv"
 )
 
-// ListParams godoc
-// ListParams represents the parameters for getting many objects.
-// @Schema(name="ListParams")
-// @Required
-// @Description These parameters control the pagination and sorting of the results.
-// @Example {"limit": 10, "offset": 0, "sorting": "email[asc]"}
-type ListParams struct {
-	Limit   *int    `json:"limit" validate:"omitempty,min=0"`
-	Offset  *int    `json:"offset" validate:"omitempty,min=0"`
-	Sorting *string `json:"sort"`
-}
-
-func (p ListParams) Validate() error {
-	return Validate(p)
-}
-
-func GetValidatedListParams(limitStr string, offsetStr string, sortStr string) (*ListParams, error) {
+func GetValidatedListRequestParams(limitStr string, offsetStr string, sortStr string) (*schemas.ListParams, error) {
 	// Create ListParams
-	var params ListParams
+	var params schemas.ListParams
 	// Get and set the limit if it exists
 	if limitStr != "" {
 		limit, err := strconv.Atoi(limitStr)
