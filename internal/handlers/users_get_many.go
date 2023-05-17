@@ -18,6 +18,8 @@ import (
 // @Param offset query int false "Offset"
 // @Param sort query string false "Sorting (format: field[direction])"
 // @Success 200 {array} models.User
+// @Failure 422 {object} schemas.ErrorResponse "Unprocessable entity"
+// @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/users [get]
 func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to fetch many users.")

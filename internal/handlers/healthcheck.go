@@ -15,6 +15,7 @@ import (
 // @Produce  json
 // @Success 200 {object} schemas.HealthCheckResponse
 // @Failure 403 {object} string "forbidden"
+// @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/healthcheck [get]
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	// Setting the response header indicating the type of content

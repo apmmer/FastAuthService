@@ -94,6 +94,10 @@ paths:
           description: forbidden
           schema:
             type: string
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: Show server status
       tags:
       - Health
@@ -124,6 +128,14 @@ paths:
             items:
               $ref: '#/definitions/models.User'
             type: array
+        "422":
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
       summary: Get many users
       tags:
       - Users

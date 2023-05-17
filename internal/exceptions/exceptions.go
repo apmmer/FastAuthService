@@ -19,10 +19,10 @@ func (e *ErrMultipleEntries) Error() string {
 }
 
 // input data validation error
-type ErrUnprocessableEntity struct {
+type ErrInvalidEntity struct {
 	Message string
 }
 
-func (e *ErrUnprocessableEntity) Error() string {
+func (e *ErrInvalidEntity) Error() string {
 	return e.Message
 }
