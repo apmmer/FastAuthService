@@ -61,6 +61,11 @@ definitions:
     - password
     - screen_name
     type: object
+  schemas.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
   schemas.HealthCheckResponse:
     properties:
       status:
@@ -153,6 +158,41 @@ paths:
       summary: Register new user
       tags:
       - users
+  /api/users/{id}:
+    get:
+      description: Retrieve a user from the database by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "406":
+          description: Multiple users found
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "422":
+          description: Unprocessable entity
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      summary: Get user by ID
+      tags:
+      - Users
 securityDefinitions:
   ApiKeyAuth:
     in: header

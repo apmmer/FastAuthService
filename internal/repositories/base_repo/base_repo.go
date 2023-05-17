@@ -2,8 +2,10 @@ package base_repo
 
 import (
 	"AuthService/database"
+	"AuthService/internal/exceptions"
 	"context"
 	"fmt"
+	"log"
 	"strings"
 )
 
@@ -70,7 +72,7 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 
 	if offset != nil {
 		args = append(args, *offset)
-		sql += fmt.Sprintf(" OFFSET %d", len(args))
+		sql += fmt.Sprintf(" OFFSET $%d", len(args))
 	}
 
 	rows, err := database.Pool.Query(context.Background(), sql, args...)
@@ -94,4 +96,23 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 	}
 
 	return results, nil
+}
+
+// Retrieves 1 record from the table according filters, else returns an error.
+func GetOne(tableName string, filters *map[string]interface{}) (map[string]interface{}, error) {
+	// retirving records using GetMany method
+	records, err := GetMany(tableName, nil, nil, nil, nil, filters)
+	log.Println("Got records using GetMany")
+
+	if err != nil {
+		return nil, fmt.Errorf("could not perform GetMany method: %v", err)
+	}
+	// we expect that we have only 1 record, so validate:
+	if records != nil && len(records) == 0 || len(records) == 0 {
+		return nil, &exceptions.ErrNotFound{Message: "got no records according filters."}
+	}
+	if len(records) > 1 {
+		return nil, &exceptions.ErrMultipleEntries{Message: "got multiple records according filters, but expected 1."}
+	}
+	return records[0], nil
 }

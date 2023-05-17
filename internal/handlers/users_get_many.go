@@ -13,7 +13,7 @@ import (
 // GetManyUsers godoc
 // @Summary Get many users
 // @Description get many users based on pagination and sorting parameters
-// @Tags users
+// @Tags Users
 // @Accept json
 // @Produce json
 // @Param limit query int false "Limit"

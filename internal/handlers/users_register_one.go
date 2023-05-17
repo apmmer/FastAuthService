@@ -11,7 +11,7 @@ import (
 // RegisterUser godoc
 // @Summary Register new user
 // @Description Register a new user with email, screen_name, and password
-// @Tags users
+// @Tags Users
 // @Accept  json
 // @Produce  json
 // @Param user body schemas.CreateUserRequest true "Create user"

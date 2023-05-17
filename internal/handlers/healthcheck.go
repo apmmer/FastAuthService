@@ -10,7 +10,7 @@ import (
 // HealthCheck godoc
 // @Summary Show server status
 // @Description Get server status
-// @Tags health
+// @Tags Health
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} schemas.HealthCheckResponse
