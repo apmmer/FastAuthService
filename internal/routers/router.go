@@ -20,7 +20,7 @@ func GetRouter() http.Handler {
 	router.HandleFunc("/api/users", handlers.GetManyUsers).Methods("GET")
 	router.HandleFunc("/api/users/{id}", handlers.GetUserById).Methods("GET")
 	router.HandleFunc("/api/login", handlers.Login).Methods("POST")
-	router.HandleFunc("/api/refresh", handlers.Login).Methods("POST")
+	router.HandleFunc("/api/refresh", handlers.RefreshTokens).Methods("POST")
 
 	// Swagger endpoint
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
