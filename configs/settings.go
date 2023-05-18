@@ -13,10 +13,13 @@ func GetEnv(key, fallback string) string {
 }
 
 type MainSettingsScheme struct {
-	UsersDBURL     string
-	ProjectPath    string
-	UsersTableName string
-	Debug          string
+	UsersDBURL              string
+	ProjectPath             string
+	UsersTableName          string
+	Debug                   string
+	JwtSecret               string
+	TokenLifeMinutes        int
+	RefreshTokenLifeMinutes int
 }
 
 func GetSettings() *MainSettingsScheme {
@@ -31,6 +34,12 @@ func GetSettings() *MainSettingsScheme {
 			"DEBUG",
 			"true",
 		),
+		JwtSecret: GetEnv(
+			"JWT_SECRET",
+			"secret",
+		),
+		TokenLifeMinutes:        10,
+		RefreshTokenLifeMinutes: 1000,
 	}
 }
 

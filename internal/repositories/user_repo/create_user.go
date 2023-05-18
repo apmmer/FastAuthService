@@ -6,6 +6,7 @@ import (
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/schemas"
 	"AuthService/internal/utils"
+	"fmt"
 	"log"
 	"time"
 )
@@ -13,10 +14,14 @@ import (
 // CreateUser creates a new user in the database
 func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 
+	hashedPassword, err := utils.HashPassword(request.Password)
+	if err != nil {
+		return nil, fmt.Errorf("could not encrypt password: %v", err)
+	}
 	user := models.User{
 		ScreenName: request.ScreenName,
 		Email:      request.Email,
-		Password:   request.Password,
+		Password:   hashedPassword,
 		CreatedAt:  time.Now(),
 		UpdatedAt:  time.Now(),
 	}
