@@ -35,3 +35,21 @@ type ErrDbConflict struct {
 func (e *ErrDbConflict) Error() string {
 	return e.Message
 }
+
+// Auth data was not provided or can not be extracted
+type ErrNoAuthData struct {
+	Message string
+}
+
+func (e *ErrNoAuthData) Error() string {
+	return e.Message
+}
+
+// Auth data is invalid
+type ErrUnauthorized struct {
+	Message string
+}
+
+func (e *ErrUnauthorized) Error() string {
+	return e.Message
+}

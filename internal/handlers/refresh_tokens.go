@@ -2,13 +2,39 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/exceptions"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/utils"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
+
+func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
+	c, err := r.Cookie("refresh_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			return nil, &exceptions.ErrNoAuthData{Message: "refresh token is not provided in cookies"}
+		}
+		return nil, err
+	}
+	refreshToken := c.Value
+
+	// Parse the refresh token
+	claims, err := utils.ParseToken(refreshToken, configs.MainSettings.JwtRefreshSecret)
+	if err != nil {
+		return nil, &exceptions.ErrUnauthorized{Message: "invalid refresh token"}
+	}
+
+	// Check if the refresh token has expired
+	if claims.ExpiresAt < time.Now().Unix() {
+		return nil, &exceptions.ErrUnauthorized{Message: "expired refresh token"}
+	}
+	return claims, nil
+}
 
 // RefreshTokens is a handler function for token refresh requests.
 // @Summary Refresh JWT token
@@ -24,27 +50,9 @@ import (
 // @Router /api/refresh [post]
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	// Extract the refresh token from the request cookies
-	c, err := r.Cookie("refresh_token")
+	claims, err := ValidateRefreshTokenCookie(r)
 	if err != nil {
-		if err == http.ErrNoCookie {
-			ErrorResponse(w, "refresh token not provided", http.StatusForbidden)
-			return
-		}
 		HandleException(w, err)
-		return
-	}
-	refreshToken := c.Value
-
-	// Parse the refresh token
-	claims, err := utils.ParseToken(refreshToken, configs.MainSettings.JwtRefreshSecret)
-	if err != nil {
-		ErrorResponse(w, "invalid refresh token", http.StatusUnauthorized)
-		return
-	}
-
-	// Check if the refresh token has expired
-	if claims.ExpiresAt < time.Now().Unix() {
-		ErrorResponse(w, "expired refresh token", http.StatusUnauthorized)
 		return
 	}
 
@@ -54,16 +62,8 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
-	filters := make(map[string]interface{})
-	filters["id"] = userId
-	user, err := user_repo.GetUser(&filters)
-	if err != nil {
-		HandleException(w, err)
-		return
-	}
-
-	// Generate a new access token
-	accessToken, err := utils.GenerateAccessToken(user)
+	// Retrieve user. Currently it is not necessary, but in future - yes.
+	user, err := user_repo.GetActiveUserById(userId)
 	if err != nil {
 		HandleException(w, err)
 		return
@@ -77,6 +77,12 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, &cookies)
 
+	// Generate a new access token
+	accessToken, err := utils.GenerateAccessToken(user)
+	if err != nil {
+		HandleException(w, err)
+		return
+	}
 	// Return the new access token
 	err = HandleJsonResponse(w, accessToken)
 	if err != nil {

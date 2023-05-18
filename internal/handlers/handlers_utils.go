@@ -30,6 +30,12 @@ func HandleException(w http.ResponseWriter, err error) {
 	case *exceptions.ErrDbConflict:
 		log.Println("ErrDbConflict...")
 		ErrorResponse(w, err.Error(), http.StatusConflict)
+	case *exceptions.ErrNoAuthData:
+		log.Println("ErrNoAuthData...")
+		ErrorResponse(w, err.Error(), http.StatusForbidden)
+	case *exceptions.ErrUnauthorized:
+		log.Println("ErrUnauthorized...")
+		ErrorResponse(w, err.Error(), http.StatusUnauthorized)
 	default:
 		log.Println("default Exception...")
 		ErrorResponse(w, "Server can not process your request", http.StatusInternalServerError)

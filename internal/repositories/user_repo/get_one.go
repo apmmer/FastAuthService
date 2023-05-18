@@ -27,6 +27,7 @@ func validateUserFilters(filters *map[string]interface{}) error {
 	return nil
 }
 
+// Retrieves a data from DB according filters and returns created User object.
 func GetUser(filters *map[string]interface{}) (*models.User, error) {
 	err := validateUserFilters(filters)
 	if err != nil {
@@ -55,4 +56,14 @@ func GetUser(filters *map[string]interface{}) (*models.User, error) {
 		user.Rank = &rank
 	}
 	return &user, nil
+}
+
+// Retrieves not deleted user by ID using GetUser function.
+// This variation of GetUser() can help with drying and simplifying a code.
+func GetActiveUserById(userId int) (*models.User, error) {
+	filters := make(map[string]interface{})
+	filters["id"] = userId
+	filters["deleted_at"] = nil
+	user, err := GetUser(&filters)
+	return user, err
 }

@@ -20,6 +20,13 @@ func UpdateExceptionMsg(msg string, err error) error {
 	case *exceptions.ErrDbConflict:
 		log.Println("Update ErrDbConflict...")
 		return &exceptions.ErrDbConflict{Message: fmt.Sprintf("%s: %v", msg, err)}
+	case *exceptions.ErrNoAuthData:
+		log.Println("Update ErrNoAuthData...")
+		return &exceptions.ErrNoAuthData{Message: fmt.Sprintf("%s: %v", msg, err)}
+	case *exceptions.ErrUnauthorized:
+		log.Println("Update ErrUnauthorized...")
+		return &exceptions.ErrUnauthorized{Message: fmt.Sprintf("%s: %v", msg, err)}
+
 	default:
 		log.Println("Update default Exception...")
 		return fmt.Errorf("%s: %v", msg, err)
