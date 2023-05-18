@@ -32,7 +32,7 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 		limitStr, offsetStr, sortStr,
 	)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+		HandleException(w, err)
 		return
 	}
 
@@ -42,8 +42,8 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := user_repo.GetManyUsers(*params)
 	if err != nil {
 		HandleException(w, err)
+		return
 	}
-
 	log.Println("Successfully got result from user_repo.GetManyUsers")
 
 	// Setting the status 200
@@ -53,6 +53,6 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	// Prepare response
 	err = HandleJsonResponse(w, users)
 	if err != nil {
-		log.Println("Error while handling JSON response:", err)
+		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

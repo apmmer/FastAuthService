@@ -26,3 +26,12 @@ type ErrInvalidEntity struct {
 func (e *ErrInvalidEntity) Error() string {
 	return e.Message
 }
+
+// Db entries conflict error
+type ErrDbConflict struct {
+	Message string
+}
+
+func (e *ErrDbConflict) Error() string {
+	return e.Message
+}

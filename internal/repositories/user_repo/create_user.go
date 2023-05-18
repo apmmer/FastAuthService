@@ -2,12 +2,10 @@ package user_repo
 
 import (
 	"AuthService/configs"
-	"AuthService/internal/exceptions"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/schemas"
 	"AuthService/internal/utils"
-	"fmt"
 	"log"
 	"time"
 )
@@ -23,23 +21,19 @@ func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 		UpdatedAt:  time.Now(),
 	}
 
-	log.Println("Trying to marshal user data")
-	// Converting fields values to string
-	fields, values, err := utils.MarshalToDBString(user)
-	if err != nil {
-		return nil, &exceptions.ErrInvalidEntity{
-			Message: fmt.Sprintf("failed to marshal user data: %v", err),
-		}
-	}
+	// prepare data for db insertion
+	ignore_field := "id"
+	fields, values := utils.GetFieldsAndValues(user, ignore_field)
 
+	log.Println("Calling base_repo.CreateOne")
 	// Calling the CreateOne function from base_repo
-	log.Println("base_repo.CreateOne fields = " + fields + "	values = " + values)
-	id, err := base_repo.CreateOne(configs.MainSettings.UsersTableName, fields, values)
+	id, err := base_repo.CreateOne(
+		configs.MainSettings.UsersTableName, fields, values)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user: %v", err)
+		err = utils.UpdateExceptionMsg("failed to create user", err)
+		return nil, err
 	}
 	// Setting the generated ID to the user model
 	user.ID = uint(id)
-
 	return &user, nil
 }

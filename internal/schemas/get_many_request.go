@@ -1,6 +1,7 @@
 package schemas
 
 import (
+	"AuthService/internal/exceptions"
 	"fmt"
 	"strconv"
 )
@@ -28,7 +29,9 @@ func GetValidatedListParams(limitStr string, offsetStr string, sortStr string) (
 	if limitStr != "" {
 		limit, err := strconv.Atoi(limitStr)
 		if err != nil {
-			return nil, fmt.Errorf("could not prepare limit: %v", err)
+			return nil, &exceptions.ErrInvalidEntity{
+				Message: fmt.Sprintf("could not prepare limit: %v", err),
+			}
 		}
 		params.Limit = &limit
 	}
@@ -37,7 +40,9 @@ func GetValidatedListParams(limitStr string, offsetStr string, sortStr string) (
 	if offsetStr != "" {
 		offset, err := strconv.Atoi(offsetStr)
 		if err != nil {
-			return nil, fmt.Errorf("could not prepare offset: %v", err)
+			return nil, &exceptions.ErrInvalidEntity{
+				Message: fmt.Sprintf("could not prepare offset: %v", err),
+			}
 		}
 		params.Offset = &offset
 	}
@@ -50,7 +55,9 @@ func GetValidatedListParams(limitStr string, offsetStr string, sortStr string) (
 	// Validate params
 	err := params.Validate()
 	if err != nil {
-		return nil, fmt.Errorf("could not prepare validate params: %v", err)
+		return nil, &exceptions.ErrInvalidEntity{
+			Message: fmt.Sprintf("could not prepare validate params: %v", err),
+		}
 	}
 
 	return &params, nil
