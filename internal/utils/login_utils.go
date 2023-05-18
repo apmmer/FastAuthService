@@ -4,6 +4,7 @@ import (
 	"AuthService/configs"
 	"AuthService/internal/models"
 	"AuthService/internal/schemas"
+	"net/http"
 	"strconv"
 	"time"
 
@@ -36,19 +37,13 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-// GenerateToken creates a new JWT for the provided user.
-// The token includes the user's ID and an expiration timestamp, and it is signed with a secret key.
-// The function returns a TokenResponse struct, which includes the JWT itself and its expiration timestamp.
-func GenerateToken(user *models.User) (*schemas.TokenResponse, error) {
-
-	// Calculate the expiration timestamp for the token: current time + the configured lifespan of the token
-	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.TokenLifeMinutes)).Unix()
-
+// generates exactly JWT token with provided data
+func GenerateJWT(user *models.User, expiresAt int64, issuer string, secret string) (string, error) {
 	// Create the claims for the JWT: these are the pieces of data we want to include in the token.
 	// In this case, we are including the standard claims (expiry, issuer) plus the ID of the user.
 	claims := &jwt.StandardClaims{
 		ExpiresAt: expiresAt,
-		Issuer:    "AuthService",
+		Issuer:    issuer,
 		Id:        strconv.Itoa(int(user.ID)),
 	}
 
@@ -56,14 +51,27 @@ func GenerateToken(user *models.User) (*schemas.TokenResponse, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	// Sign the token with our secret
-	tokenString, err := token.SignedString([]byte(configs.MainSettings.JwtSecret))
+	tokenString, err := token.SignedString([]byte(secret))
 
 	// If there was an error in the previous step, return the error
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	// Create a new TokenResponse struct to hold the token and its expiration timestamp
+	// Return the TokenResponse struct and no error
+	return tokenString, nil
+}
+
+// GenerateAccessToken creates a new Access JWT for the provided user.
+// The token includes the user's ID and an expiration timestamp, and it is signed with a secret key.
+// The function returns a TokenResponse struct, which includes the JWT itself and its expiration timestamp.
+func GenerateAccessToken(user *models.User) (*schemas.TokenResponse, error) {
+	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.TokenLifeMinutes)).Unix()
+	tokenString, err := GenerateJWT(user, expiresAt, configs.MainSettings.ServiceName, configs.MainSettings.JwtSecret)
+	if err != nil {
+		return nil, err
+	}
+	// Create TokenResponse using expiresAt
 	tokenRes := schemas.TokenResponse{
 		AccessToken:   tokenString,
 		AccessExpires: expiresAt,
@@ -71,4 +79,25 @@ func GenerateToken(user *models.User) (*schemas.TokenResponse, error) {
 
 	// Return the TokenResponse struct and no error
 	return &tokenRes, nil
+}
+
+// GenerateRefreshToken generates a new JWT refresh token for a given user
+func GenerateRefreshCookies(user *models.User) (http.Cookie, error) {
+	// Set expiration time for refresh token (longer than access token)
+	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes)).Unix()
+	tokenString, err := GenerateJWT(user, expiresAt, configs.MainSettings.ServiceName, configs.MainSettings.JwtRefreshSecret)
+	if err != nil {
+		return http.Cookie{}, err
+	}
+
+	// Create and return the refresh token cookie
+	cookie := http.Cookie{
+		Name:     "refresh_token",
+		Value:    tokenString,
+		Expires:  time.Unix(expiresAt, 0),
+		HttpOnly: true,
+		Secure:   configs.MainSettings.SecureCookies,
+		SameSite: http.SameSiteStrictMode,
+	}
+	return cookie, nil
 }

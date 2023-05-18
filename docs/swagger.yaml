@@ -128,7 +128,7 @@ paths:
       parameters:
       - description: The email and password of the user
         in: body
-        name: loginInput
+        name: InputBody
         required: true
         schema:
           $ref: '#/definitions/schemas.LoginInput'

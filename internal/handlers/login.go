@@ -16,7 +16,7 @@ import (
 // @Tags Users
 // @Accept  json
 // @Produce  json
-// @Param loginInput body schemas.LoginInput true "The email and password of the user"
+// @Param InputBody body schemas.LoginInput true "The email and password of the user"
 // @Success 200 {object} schemas.TokenResponse "Returns a struct with the JWT and its expiration timestamp"
 // @Failure 400 {object} string "Returns an error message if the request body cannot be parsed"
 // @Failure 401 {object} string "Returns an error message if the provided password does not match the hash stored in the database"
@@ -28,7 +28,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var input schemas.LoginInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		ErrorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -49,11 +49,19 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Генерируем токен доступа
-	token, err := utils.GenerateToken(user)
+	token, err := utils.GenerateAccessToken(user)
 	if err != nil {
 		HandleException(w, err)
 		return
 	}
+
+	// Set Refresh cookies
+	cookies, err := utils.GenerateRefreshCookies(user)
+	if err != nil {
+		HandleException(w, err)
+		return
+	}
+	http.SetCookie(w, &cookies)
 
 	// Возвращаем токен в ответе
 	err = HandleJsonResponse(w, token)

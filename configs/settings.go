@@ -13,13 +13,17 @@ func GetEnv(key, fallback string) string {
 }
 
 type MainSettingsScheme struct {
+	ServiceName             string
 	UsersDBURL              string
 	ProjectPath             string
 	UsersTableName          string
 	Debug                   string
 	JwtSecret               string
+	JwtRefreshSecret        string
 	TokenLifeMinutes        int
 	RefreshTokenLifeMinutes int
+	SecureCookies           bool
+	HttpOnlyCookies         bool
 }
 
 func GetSettings() *MainSettingsScheme {
@@ -28,8 +32,6 @@ func GetSettings() *MainSettingsScheme {
 			"USERS_DB_URL",
 			"postgres://admin:admin@auth_service_postgres:5432/users_db?sslmode=disable",
 		),
-		ProjectPath:    "/app",
-		UsersTableName: "users",
 		Debug: GetEnv(
 			"DEBUG",
 			"true",
@@ -38,8 +40,17 @@ func GetSettings() *MainSettingsScheme {
 			"JWT_SECRET",
 			"secret",
 		),
+		JwtRefreshSecret: GetEnv(
+			"JWT_REFRESH_SECRET",
+			"refresh",
+		),
+		ProjectPath:             "/app",
+		UsersTableName:          "users",
 		TokenLifeMinutes:        10,
 		RefreshTokenLifeMinutes: 1000,
+		ServiceName:             "AuthService",
+		HttpOnlyCookies:         true,
+		SecureCookies:           false,
 	}
 }
 

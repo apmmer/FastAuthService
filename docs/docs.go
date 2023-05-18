@@ -67,7 +67,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "The email and password of the user",
-                        "name": "loginInput",
+                        "name": "InputBody",
                         "in": "body",
                         "required": true,
                         "schema": {
