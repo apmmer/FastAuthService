@@ -6,6 +6,7 @@ import (
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/utils"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -38,17 +39,17 @@ func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
 
 // RefreshTokens is a handler function for token refresh requests.
 // @Summary Refresh JWT token
-// @Description Use the refresh token to get a new access token
+// @Description Use the refresh token to get a new access token and to set new refresh token in cookies.
 // @Tags Auth
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} schemas.TokenResponse
-// @Failure 400 {object} string "bad request"
-// @Failure 401 {object} string "unauthorized"
-// @Failure 403 {object} string "Auth data was not provided"
-// @Failure 500 {object} string "Internal server error"
+// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
+// @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/refresh [post]
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
+	log.Println("Validating token")
 	// Extract the refresh token from the request cookies
 	claims, err := ValidateRefreshTokenCookie(r)
 	if err != nil {
@@ -58,6 +59,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 
 	// Get the user associated with the refresh token
 	userId, err := strconv.Atoi(claims.Id)
+	log.Printf("Got userId = %d", userId)
 	if err != nil {
 		HandleException(w, err)
 		return
@@ -68,6 +70,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
+	log.Printf("Got user = %v", user)
 
 	// Set Refresh cookies
 	cookies, err := utils.GenerateRefreshCookies(user)

@@ -3,6 +3,7 @@ package base_repo
 import (
 	"AuthService/database"
 	"AuthService/internal/exceptions"
+	"AuthService/internal/utils"
 	"context"
 	"fmt"
 	"log"
@@ -54,10 +55,15 @@ func ParseSQLFilters(filters *map[string]interface{}) (string, []interface{}, er
 	var args []interface{}
 
 	if filters != nil && len(*filters) > 0 {
+		// Avoid SQL injection by using placeholders and passing values separately
 		for field, value := range *filters {
-			// Avoid SQL injection by using placeholders and passing values separately
-			args = append(args, value)
-			filterStr += fmt.Sprintf(" %s = $%d AND", field, len(args))
+			// If we filter by value=nil, it means we want to filter by field=NULL.
+			if value == nil {
+				filterStr += fmt.Sprintf(" %s IS NULL AND", field)
+			} else {
+				args = append(args, value)
+				filterStr += fmt.Sprintf(" %s = $%d AND", field, len(args))
+			}
 		}
 		filterStr = strings.TrimSuffix(filterStr, " AND") // Remove the trailing ' AND'
 	}
@@ -99,6 +105,7 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 		sql += fmt.Sprintf(" OFFSET $%d", len(args))
 	}
 
+	log.Printf("base_repo.GetMany: \n%s \nargs: %v", sql, args)
 	rows, err := database.Pool.Query(context.Background(), sql, args...)
 	if err != nil {
 		return nil, fmt.Errorf("could not get records from %s table: %v", tableName, err)
@@ -126,10 +133,9 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 func GetOne(tableName string, filters *map[string]interface{}) (map[string]interface{}, error) {
 	// retirving records using GetMany method
 	records, err := GetMany(tableName, nil, nil, nil, nil, filters)
-	log.Println("Got records using GetMany")
-
+	log.Printf("base_repo.GetOne: Got %d records using GetMany", len(records))
 	if err != nil {
-		return nil, fmt.Errorf("could not perform GetMany method: %v", err)
+		return nil, utils.UpdateExceptionMsg("could not perform GetMany method", err)
 	}
 	// we expect that we have only 1 record, so validate:
 	if records != nil && len(records) == 0 || len(records) == 0 {

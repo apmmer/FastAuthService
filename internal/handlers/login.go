@@ -12,15 +12,16 @@ import (
 
 // Login godoc
 // @Summary Logs in a user
-// @Description Authenticates a user using email and password, and generates a new JWT
-// @Tags Users
+// @Description Authenticates a user using email and password, and generates a new JWT. Also sets refresh token in cookies.
+// @Tags Auth
 // @Accept  json
 // @Produce  json
 // @Param InputBody body schemas.LoginInput true "The email and password of the user"
 // @Success 200 {object} schemas.TokenResponse "Returns a struct with the JWT and its expiration timestamp"
-// @Failure 400 {object} string "Returns an error message if the request body cannot be parsed"
-// @Failure 401 {object} string "Returns an error message if the provided password does not match the hash stored in the database"
-// @Failure 500 {object} string "Returns an error message if there is a server-side issue"
+// @Failure 400 {object} schemas.ErrorResponse "Returns an error message if the request body cannot be parsed"
+// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
+// @Failure 500 {object} schemas.ErrorResponse "Returns an error message if there is a server-side issue"
 // @Router /api/login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to login.")

@@ -16,8 +16,10 @@ import (
 // @Produce  json
 // @Param user body schemas.CreateUserRequest true "Create user"
 // @Success 201 {object} models.User "User registered successfully"
-// @Failure 400 {object} map[string]interface{} "Bad request"
-// @Failure 500 {object} map[string]interface{} "Internal server error"
+// @Failure 400 {object} schemas.ErrorResponse "Bad request"
+// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
+// @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/users [post]
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	log.Println("RegisterUser handler invoked")

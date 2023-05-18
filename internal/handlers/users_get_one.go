@@ -14,8 +14,10 @@ import (
 // @Produce  json
 // @Param id path int true "User ID"
 // @Success 200 {object} models.User
+// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
 // @Failure 404 {object} schemas.ErrorResponse "User not found"
-// @Failure 406 {object} schemas.ErrorResponse "Multiple users found"
+// @Failure 406 {object} schemas.ErrorResponse "Multiple records found (internal error)"
 // @Failure 422 {object} schemas.ErrorResponse "Unprocessable entity"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/users/{id} [get]

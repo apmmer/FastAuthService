@@ -37,13 +37,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Wrong auth data",
+                        "description": "Error raturned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "No auth data",
+                        "description": "Error raturned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -59,7 +59,7 @@ const docTemplate = `{
         },
         "/api/login": {
             "post": {
-                "description": "Authenticates a user using email and password, and generates a new JWT",
+                "description": "Authenticates a user using email and password, and generates a new JWT. Also sets refresh token in cookies.",
                 "consumes": [
                     "application/json"
                 ],
@@ -67,7 +67,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "Auth"
                 ],
                 "summary": "Logs in a user",
                 "parameters": [
@@ -91,19 +91,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Returns an error message if the request body cannot be parsed",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "401": {
-                        "description": "Returns an error message if the provided password does not match the hash stored in the database",
+                        "description": "Error raturned when the provided auth data is invalid",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Error raturned when auth data was not provided",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Returns an error message if there is a server-side issue",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     }
                 }
@@ -111,7 +117,7 @@ const docTemplate = `{
         },
         "/api/refresh": {
             "post": {
-                "description": "Use the refresh token to get a new access token",
+                "description": "Use the refresh token to get a new access token and to set new refresh token in cookies.",
                 "consumes": [
                     "application/json"
                 ],
@@ -129,28 +135,22 @@ const docTemplate = `{
                             "$ref": "#/definitions/schemas.TokenResponse"
                         }
                     },
-                    "400": {
-                        "description": "bad request",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     "401": {
-                        "description": "unauthorized",
+                        "description": "Error raturned when the provided auth data is invalid",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Auth data was not provided",
+                        "description": "Error raturned when auth data was not provided",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     }
                 }
@@ -197,6 +197,18 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/models.User"
                             }
+                        }
+                    },
+                    "401": {
+                        "description": "Error raturned when the provided auth data is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Error raturned when auth data was not provided",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "422": {
@@ -246,15 +258,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad request",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Error raturned when the provided auth data is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Error raturned when auth data was not provided",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     }
                 }
@@ -286,6 +308,18 @@ const docTemplate = `{
                             "$ref": "#/definitions/models.User"
                         }
                     },
+                    "401": {
+                        "description": "Error raturned when the provided auth data is invalid",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Error raturned when auth data was not provided",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.ErrorResponse"
+                        }
+                    },
                     "404": {
                         "description": "User not found",
                         "schema": {
@@ -293,7 +327,7 @@ const docTemplate = `{
                         }
                     },
                     "406": {
-                        "description": "Multiple users found",
+                        "description": "Multiple records found (internal error)",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
