@@ -14,29 +14,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
-	c, err := r.Cookie("refresh_token")
-	if err != nil {
-		if err == http.ErrNoCookie {
-			return nil, &exceptions.ErrNoAuthData{Message: "refresh token is not provided in cookies"}
-		}
-		return nil, err
-	}
-	refreshToken := c.Value
-
-	// Parse the refresh token
-	claims, err := utils.ParseToken(refreshToken, configs.MainSettings.JwtRefreshSecret)
-	if err != nil {
-		return nil, &exceptions.ErrUnauthorized{Message: "invalid refresh token"}
-	}
-
-	// Check if the refresh token has expired
-	if claims.ExpiresAt < time.Now().Unix() {
-		return nil, &exceptions.ErrUnauthorized{Message: "expired refresh token"}
-	}
-	return claims, nil
-}
-
 // RefreshTokens is a handler function for token refresh requests.
 // @Summary Refresh JWT token
 // @Description Use the refresh token to get a new access token and to set new refresh token in cookies.
@@ -44,8 +21,8 @@ func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} schemas.TokenResponse
-// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
-// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
+// @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/refresh [post]
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
@@ -91,4 +68,27 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
+}
+
+func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
+	c, err := r.Cookie("refresh_token")
+	if err != nil {
+		if err == http.ErrNoCookie {
+			return nil, &exceptions.ErrNoAuthData{Message: "refresh token is not provided in cookies"}
+		}
+		return nil, err
+	}
+	refreshToken := c.Value
+
+	// Parse the refresh token
+	claims, err := utils.ParseToken(refreshToken, configs.MainSettings.JwtRefreshSecret)
+	if err != nil {
+		return nil, &exceptions.ErrUnauthorized{Message: "invalid refresh token"}
+	}
+
+	// Check if the refresh token has expired
+	if claims.ExpiresAt < time.Now().Unix() {
+		return nil, &exceptions.ErrUnauthorized{Message: "expired refresh token"}
+	}
+	return claims, nil
 }

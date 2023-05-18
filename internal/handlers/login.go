@@ -19,8 +19,8 @@ import (
 // @Param InputBody body schemas.LoginInput true "The email and password of the user"
 // @Success 200 {object} schemas.TokenResponse "Returns a struct with the JWT and its expiration timestamp"
 // @Failure 400 {object} schemas.ErrorResponse "Returns an error message if the request body cannot be parsed"
-// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
-// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
+// @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
 // @Failure 500 {object} schemas.ErrorResponse "Returns an error message if there is a server-side issue"
 // @Router /api/login [post]
 func Login(w http.ResponseWriter, r *http.Request) {

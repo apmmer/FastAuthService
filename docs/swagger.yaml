@@ -109,11 +109,11 @@ paths:
           schema:
             $ref: '#/definitions/schemas.HealthCheckResponse'
         "401":
-          description: Error raturned when the provided auth data is invalid
+          description: Error returned when the provided auth data is invalid
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "403":
-          description: Error raturned when auth data was not provided
+          description: Error returned when auth data was not provided
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "500":
@@ -148,11 +148,11 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "401":
-          description: Error raturned when the provided auth data is invalid
+          description: Error returned when the provided auth data is invalid
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "403":
-          description: Error raturned when auth data was not provided
+          description: Error returned when auth data was not provided
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "500":
@@ -176,11 +176,11 @@ paths:
           schema:
             $ref: '#/definitions/schemas.TokenResponse'
         "401":
-          description: Error raturned when the provided auth data is invalid
+          description: Error returned when the provided auth data is invalid
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "403":
-          description: Error raturned when auth data was not provided
+          description: Error returned when auth data was not provided
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "500":
@@ -218,11 +218,11 @@ paths:
               $ref: '#/definitions/models.User'
             type: array
         "401":
-          description: Error raturned when the provided auth data is invalid
+          description: Error returned when the provided auth data is invalid
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "403":
-          description: Error raturned when auth data was not provided
+          description: Error returned when auth data was not provided
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "422":
@@ -259,11 +259,11 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "401":
-          description: Error raturned when the provided auth data is invalid
+          description: Error returned when the provided auth data is invalid
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "403":
-          description: Error raturned when auth data was not provided
+          description: Error returned when auth data was not provided
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "500":
@@ -290,11 +290,11 @@ paths:
           schema:
             $ref: '#/definitions/models.User'
         "401":
-          description: Error raturned when the provided auth data is invalid
+          description: Error returned when the provided auth data is invalid
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "403":
-          description: Error raturned when auth data was not provided
+          description: Error returned when auth data was not provided
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "404":

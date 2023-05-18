@@ -37,13 +37,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Error raturned when the provided auth data is invalid",
+                        "description": "Error returned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Error raturned when auth data was not provided",
+                        "description": "Error returned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -95,13 +95,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Error raturned when the provided auth data is invalid",
+                        "description": "Error returned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Error raturned when auth data was not provided",
+                        "description": "Error returned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -136,13 +136,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Error raturned when the provided auth data is invalid",
+                        "description": "Error returned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Error raturned when auth data was not provided",
+                        "description": "Error returned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -200,13 +200,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Error raturned when the provided auth data is invalid",
+                        "description": "Error returned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Error raturned when auth data was not provided",
+                        "description": "Error returned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -262,13 +262,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Error raturned when the provided auth data is invalid",
+                        "description": "Error returned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Error raturned when auth data was not provided",
+                        "description": "Error returned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -309,13 +309,13 @@ const docTemplate = `{
                         }
                     },
                     "401": {
-                        "description": "Error raturned when the provided auth data is invalid",
+                        "description": "Error returned when the provided auth data is invalid",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
                     },
                     "403": {
-                        "description": "Error raturned when auth data was not provided",
+                        "description": "Error returned when auth data was not provided",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }

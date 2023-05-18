@@ -18,8 +18,8 @@ import (
 // @Param offset query int false "Offset"
 // @Param sort query string false "Sorting (format: field[direction])"
 // @Success 200 {array} models.User
-// @Failure 401 {object} schemas.ErrorResponse "Error raturned when the provided auth data is invalid"
-// @Failure 403 {object} schemas.ErrorResponse "Error raturned when auth data was not provided"
+// @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
+// @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
 // @Failure 422 {object} schemas.ErrorResponse "Unprocessable entity"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/users [get]
