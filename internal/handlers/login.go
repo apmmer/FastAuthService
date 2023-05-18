@@ -10,6 +10,18 @@ import (
 	"net/http"
 )
 
+// Login godoc
+// @Summary Logs in a user
+// @Description Authenticates a user using email and password, and generates a new JWT
+// @Tags Users
+// @Accept  json
+// @Produce  json
+// @Param loginInput body schemas.LoginInput true "The email and password of the user"
+// @Success 200 {object} schemas.TokenResponse "Returns a struct with the JWT and its expiration timestamp"
+// @Failure 400 {object} string "Returns an error message if the request body cannot be parsed"
+// @Failure 401 {object} string "Returns an error message if the provided password does not match the hash stored in the database"
+// @Failure 500 {object} string "Returns an error message if there is a server-side issue"
+// @Router /api/login [post]
 func Login(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to login.")
 	// Декодируем входные данные
@@ -32,7 +44,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Проверяем, соответствует ли предоставленный пароль хешу пароля
 	isValid := utils.CheckPasswordHash(input.Password, user.Password)
 	if !isValid {
-		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
+		ErrorResponse(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 

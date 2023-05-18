@@ -71,6 +71,24 @@ definitions:
       status:
         type: string
     type: object
+  schemas.LoginInput:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 7
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  schemas.TokenResponse:
+    properties:
+      access_expires:
+        type: integer
+      access_token:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -101,6 +119,42 @@ paths:
       summary: Show server status
       tags:
       - Health
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates a user using email and password, and generates a
+        new JWT
+      parameters:
+      - description: The email and password of the user
+        in: body
+        name: loginInput
+        required: true
+        schema:
+          $ref: '#/definitions/schemas.LoginInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Returns a struct with the JWT and its expiration timestamp
+          schema:
+            $ref: '#/definitions/schemas.TokenResponse'
+        "400":
+          description: Returns an error message if the request body cannot be parsed
+          schema:
+            type: string
+        "401":
+          description: Returns an error message if the provided password does not
+            match the hash stored in the database
+          schema:
+            type: string
+        "500":
+          description: Returns an error message if there is a server-side issue
+          schema:
+            type: string
+      summary: Logs in a user
+      tags:
+      - Users
   /api/users:
     get:
       consumes:

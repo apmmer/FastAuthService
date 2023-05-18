@@ -51,6 +51,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/login": {
+            "post": {
+                "description": "Authenticates a user using email and password, and generates a new JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Logs in a user",
+                "parameters": [
+                    {
+                        "description": "The email and password of the user",
+                        "name": "loginInput",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/schemas.LoginInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns a struct with the JWT and its expiration timestamp",
+                        "schema": {
+                            "$ref": "#/definitions/schemas.TokenResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Returns an error message if the request body cannot be parsed",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Returns an error message if the provided password does not match the hash stored in the database",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Returns an error message if there is a server-side issue",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/api/users": {
             "get": {
                 "description": "get many users based on pagination and sorting parameters",
@@ -287,6 +339,33 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "schemas.LoginInput": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 7
+                }
+            }
+        },
+        "schemas.TokenResponse": {
+            "type": "object",
+            "properties": {
+                "access_expires": {
+                    "type": "integer"
+                },
+                "access_token": {
                     "type": "string"
                 }
             }
