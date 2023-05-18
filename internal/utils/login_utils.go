@@ -4,6 +4,8 @@ import (
 	"AuthService/configs"
 	"AuthService/internal/models"
 	"AuthService/internal/schemas"
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -100,4 +102,29 @@ func GenerateRefreshCookies(user *models.User) (http.Cookie, error) {
 		SameSite: http.SameSiteStrictMode,
 	}
 	return cookie, nil
+}
+
+// ParseToken parses a JWT token and returns the claims.
+// The function expects a valid token and a secret key. If the token is not valid or does not contain the expected claims, the function will return an error.
+func ParseToken(tokenString string, secret string) (*jwt.StandardClaims, error) {
+	// Parse the token
+	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		// Make sure that the token method conforms to "SigningMethodHMAC"
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return []byte(secret), nil
+	})
+
+	// If there was an error in parsing the token, return the error
+	if err != nil {
+		return nil, err
+	}
+
+	// If the token is valid, return the claims
+	if claims, ok := token.Claims.(*jwt.StandardClaims); ok && token.Valid {
+		return claims, nil
+	} else {
+		return nil, errors.New("invalid token")
+	}
 }

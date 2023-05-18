@@ -108,10 +108,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/schemas.HealthCheckResponse'
-        "403":
-          description: forbidden
+        "401":
+          description: Wrong auth data
           schema:
-            type: string
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "403":
+          description: No auth data
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
         "500":
           description: Internal server error
           schema:
@@ -155,6 +159,37 @@ paths:
       summary: Logs in a user
       tags:
       - Users
+  /api/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Use the refresh token to get a new access token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/schemas.TokenResponse'
+        "400":
+          description: bad request
+          schema:
+            type: string
+        "401":
+          description: unauthorized
+          schema:
+            type: string
+        "403":
+          description: Auth data was not provided
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Refresh JWT token
+      tags:
+      - Auth
   /api/users:
     get:
       consumes:

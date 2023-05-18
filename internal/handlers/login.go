@@ -49,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Генерируем токен доступа
-	token, err := utils.GenerateAccessToken(user)
+	accessToken, err := utils.GenerateAccessToken(user)
 	if err != nil {
 		HandleException(w, err)
 		return
@@ -64,7 +64,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookies)
 
 	// Возвращаем токен в ответе
-	err = HandleJsonResponse(w, token)
+	err = HandleJsonResponse(w, accessToken)
 	if err != nil {
 		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}

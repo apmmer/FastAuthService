@@ -14,7 +14,8 @@ import (
 // @Accept  json
 // @Produce  json
 // @Success 200 {object} schemas.HealthCheckResponse
-// @Failure 403 {object} string "forbidden"
+// @Failure 401 {object} schemas.ErrorResponse "Wrong auth data"
+// @Failure 403 {object} schemas.ErrorResponse "No auth data"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/healthcheck [get]
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
