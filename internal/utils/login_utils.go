@@ -89,15 +89,16 @@ func GenerateAccessToken(user *models.User, deviceInfo *schemas.DeviceInfo) (*sc
 }
 
 // GenerateRefreshToken generates a new JWT refresh token for a given user
-func GenerateRefreshCookies(user *models.User, accessToken string) (http.Cookie, error) {
+func GenerateRefreshCookies(user *models.User, accessToken string, sessionToken string) (http.Cookie, error) {
 	// Set expiration time for refresh token (longer than access token)
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes)).Unix()
 	// Note: claims include generated access token
 	claims := map[string]interface{}{
-		"Id":          strconv.Itoa(int(user.ID)),
-		"ExpiresAt":   expiresAt,
-		"Issuer":      configs.MainSettings.ServiceName,
-		"AccessToken": accessToken,
+		"Id":           strconv.Itoa(int(user.ID)),
+		"ExpiresAt":    expiresAt,
+		"Issuer":       configs.MainSettings.ServiceName,
+		"AccessToken":  accessToken,
+		"SessionToken": sessionToken,
 	}
 	tokenString, err := GenerateJWT(&claims, configs.MainSettings.JwtRefreshSecret)
 	if err != nil {

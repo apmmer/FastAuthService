@@ -35,6 +35,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
+	ValidateSession or UpdateSession directly
 
 	// Get the user associated with the refresh token
 	userId, err := strconv.Atoi((*refreshClaims)["Id"].(string))
@@ -51,15 +52,19 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Got user = %v", user)
 
+	// getting device info
+	deviceInfo := utils.GetDeviceInfo(r)
+	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
+
 	// Generate a new access token
-	accessToken, err := utils.GenerateAccessToken(user)
+	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
 	if err != nil {
 		HandleException(w, err)
 		return
 	}
 
 	// generate and set new Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken)
+	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, (*refreshClaims)["SessionToken"].(string))
 	if err != nil {
 		HandleException(w, err)
 		return

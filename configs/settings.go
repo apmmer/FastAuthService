@@ -21,6 +21,7 @@ type MainSettingsScheme struct {
 	Debug                   string
 	JwtSecret               string
 	JwtRefreshSecret        string
+	SessionSecret           string
 	TokenLifeMinutes        int
 	RefreshTokenLifeMinutes int
 	SecureCookies           bool
@@ -44,6 +45,11 @@ func GetSettings() *MainSettingsScheme {
 		JwtRefreshSecret: GetEnv(
 			"JWT_REFRESH_SECRET",
 			"refresh",
+		),
+		// 16, 24 or 32 bytes!
+		SessionSecret: GetEnv(
+			"SESSION_SECRET",
+			"sesssesssesssess",
 		),
 		ProjectPath:             "/app",
 		UsersTableName:          "users",

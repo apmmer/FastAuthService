@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"AuthService/configs"
+	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
 	"AuthService/internal/utils"
@@ -61,8 +63,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	sessionToken, err := utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
+	sessions_repo.CreateSession()
+
 	// Set Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken)
+	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken)
 	if err != nil {
 		HandleException(w, err)
 		return
