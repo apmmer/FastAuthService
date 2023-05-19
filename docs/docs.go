@@ -135,10 +135,10 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Client logout",
+                "summary": "Logs out a user",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Successfully logged out user with ID #id",
                         "schema": {
                             "type": "string"
                         }
@@ -184,7 +184,7 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Refresh JWT token",
+                "summary": "Refresh tokens",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -414,7 +414,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Use the refresh token to get a new access token and to set new refresh token in cookies.",
+                "description": "Checks if provided authorization data is valid.",
                 "consumes": [
                     "application/json"
                 ],
@@ -424,10 +424,10 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Validates access for current logged in client",
+                "summary": "Checks access for secure endpoints.",
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Authorization data is valid for user with ID #id",
                         "schema": {
                             "type": "string"
                         }

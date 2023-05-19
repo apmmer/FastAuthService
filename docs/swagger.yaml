@@ -172,7 +172,7 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: 'Successfully logged out user with ID #id'
           schema:
             type: string
         "401":
@@ -190,7 +190,7 @@ paths:
       security:
       - JWTAuth: []
       - ApiKeyAuth: []
-      summary: Client logout
+      summary: Logs out a user
       tags:
       - Auth
   /api/refresh:
@@ -221,7 +221,7 @@ paths:
       security:
       - JWTAuth: []
       - ApiKeyAuth: []
-      summary: Refresh JWT token
+      summary: Refresh tokens
       tags:
       - Auth
   /api/users:
@@ -354,13 +354,12 @@ paths:
     post:
       consumes:
       - application/json
-      description: Use the refresh token to get a new access token and to set new
-        refresh token in cookies.
+      description: Checks if provided authorization data is valid.
       produces:
       - application/json
       responses:
         "200":
-          description: OK
+          description: 'Authorization data is valid for user with ID #id'
           schema:
             type: string
         "401":
@@ -378,7 +377,7 @@ paths:
       security:
       - JWTAuth: []
       - ApiKeyAuth: []
-      summary: Validates access for current logged in client
+      summary: Checks access for secure endpoints.
       tags:
       - Auth
 schemes:
