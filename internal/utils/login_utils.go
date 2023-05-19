@@ -103,10 +103,12 @@ func GenerateRefreshCookies(user *models.User, accessToken string) (http.Cookie,
 	}
 
 	// Create and return the refresh token cookie
+	log.Printf("GenerateRefreshCookies: generated cookie with \nAccess token: %s\nCookie value %s", accessToken, tokenString)
 	cookie := http.Cookie{
 		Name:     "refresh_token",
 		Value:    tokenString,
 		Expires:  time.Unix(expiresAt, 0),
+		Path:     "/",
 		HttpOnly: true,
 		Secure:   configs.MainSettings.SecureCookies,
 		SameSite: http.SameSiteStrictMode,
@@ -158,6 +160,7 @@ func ValidateRefreshTokenCookie(r *http.Request, headerAccessToken string) (*jwt
 		return nil, err
 	}
 	cookieRefreshToken := c.Value
+	log.Printf("ValidateRefreshTokenCookie: got cookies value: %s.", cookieRefreshToken)
 
 	// Parse the refresh token
 	refreshClaims, err := ParseToken(cookieRefreshToken, configs.MainSettings.JwtRefreshSecret)
@@ -173,6 +176,7 @@ func ValidateRefreshTokenCookie(r *http.Request, headerAccessToken string) (*jwt
 	// Compare access tokens
 	cookieAccessToken := refreshClaims["AccessToken"].(string)
 	if cookieAccessToken != headerAccessToken {
+		log.Printf("ValidateRefreshTokenCookie: got different access tokens: \nFrom cookie: %s\nFrom header: %s.", cookieAccessToken, headerAccessToken)
 		return nil, &exceptions.ErrUnauthorized{Message: "a pair of access tokens are not suitable for each other"}
 	}
 	return &refreshClaims, nil

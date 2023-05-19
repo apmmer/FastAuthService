@@ -162,6 +162,37 @@ paths:
       summary: Logs in a user
       tags:
       - Auth
+  /api/logout:
+    post:
+      consumes:
+      - application/json
+      description: Restricts access to services for the active client until a new
+        login occurs.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Error returned when the provided auth data is invalid
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "403":
+          description: Error returned when auth data was not provided
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - ApiKeyAuth: []
+      summary: Client logout
+      tags:
+      - Auth
   /api/refresh:
     post:
       consumes:

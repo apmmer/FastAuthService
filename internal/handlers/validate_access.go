@@ -9,14 +9,14 @@ import (
 )
 
 // ValidateAccess is a handler function to ensure that corrent client has access.
-// @Summary Validates access for current logged in client
-// @Description Use the refresh token to get a new access token and to set new refresh token in cookies.
+// @Summary Checks access for secure endpoints.
+// @Description Checks if provided authorization data is valid.
 // @Tags Auth
 // @Accept  json
 // @Produce  json
 // @security JWTAuth
 // @security ApiKeyAuth
-// @Success 200 {object} string
+// @Success 200 {object} string "Authorization data is valid for user with ID #id"
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
 // @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
@@ -34,7 +34,7 @@ func ValidateAccess(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
-	responseMsg := fmt.Sprintf("Granted access for uid #%d", userId)
+	responseMsg := fmt.Sprintf("Authorization data is valid for user with ID #%d", userId)
 	err = HandleJsonResponse(w, responseMsg)
 	if err != nil {
 		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))

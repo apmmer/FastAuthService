@@ -10,7 +10,7 @@ import (
 )
 
 // RefreshTokens is a handler function for token refresh requests.
-// @Summary Refresh JWT token
+// @Summary Refresh tokens
 // @Description Use the refresh token to get a new access token and to set new refresh token in cookies.
 // @Tags Auth
 // @Accept  json
