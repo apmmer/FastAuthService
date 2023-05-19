@@ -17,6 +17,7 @@ type MainSettingsScheme struct {
 	UsersDBURL              string
 	ProjectPath             string
 	UsersTableName          string
+	SessionsTableName       string
 	Debug                   string
 	JwtSecret               string
 	JwtRefreshSecret        string
@@ -46,6 +47,7 @@ func GetSettings() *MainSettingsScheme {
 		),
 		ProjectPath:             "/app",
 		UsersTableName:          "users",
+		SessionsTableName:       "user_sessions",
 		TokenLifeMinutes:        10,
 		RefreshTokenLifeMinutes: 1000,
 		ServiceName:             "AuthService",

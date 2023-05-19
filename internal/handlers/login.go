@@ -36,6 +36,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Получаем пользователя из базы данных
 	filters := make(map[string]interface{})
 	filters["email"] = input.Email
+	filters["deleted_at"] = nil
 	user, err := user_repo.GetUser(&filters)
 	if err != nil {
 		HandleException(w, err)
@@ -48,6 +49,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
+
+	// getting device info
+	deviceInfo := utils.GetDeviceInfo(r)
+	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
 
 	// Генерируем токен доступа
 	accessToken, err := utils.GenerateAccessToken(user)
