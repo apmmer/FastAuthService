@@ -55,7 +55,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
 
 	// Генерируем токен доступа
-	accessToken, err := utils.GenerateAccessToken(user)
+	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
 	if err != nil {
 		HandleException(w, err)
 		return

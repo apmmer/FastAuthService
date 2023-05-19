@@ -65,12 +65,14 @@ func GenerateJWT(data *map[string]interface{}, secret string) (string, error) {
 // GenerateAccessToken creates a new Access JWT for the provided user.
 // The token includes the user's ID and an expiration timestamp, and it is signed with a secret key.
 // The function returns a TokenResponse struct, which includes the JWT itself and its expiration timestamp.
-func GenerateAccessToken(user *models.User) (*schemas.TokenResponse, error) {
+func GenerateAccessToken(user *models.User, deviceInfo *schemas.DeviceInfo) (*schemas.TokenResponse, error) {
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.TokenLifeMinutes)).Unix()
 	claims := map[string]interface{}{
 		"Id":        strconv.Itoa(int(user.ID)),
 		"ExpiresAt": expiresAt,
 		"Issuer":    configs.MainSettings.ServiceName,
+		"IPAddress": deviceInfo.IPAddress,
+		"UserAgent": deviceInfo.UserAgent,
 	}
 	tokenString, err := GenerateJWT(&claims, configs.MainSettings.JwtSecret)
 	if err != nil {
@@ -196,6 +198,15 @@ func ValidateTokenExpiresAt(claims *jwt.MapClaims) error {
 	return nil
 }
 
+func ValidateTokenDeviceInfo(r *http.Request, accessClaims *jwt.MapClaims) error {
+	deviceInfo := GetDeviceInfo(r)
+	if deviceInfo.IPAddress != (*accessClaims)["IPAddress"].(string) && deviceInfo.UserAgent != (*accessClaims)["UserAgent"].(string) {
+		log.Printf("ValidateTokenDeviceInfo error: both IPAddress and UserAgent are different.")
+		return &exceptions.ErrUnauthorized{Message: "invalid access token"}
+	}
+	return nil
+}
+
 func ValidateAccessToken(r *http.Request) (*jwt.MapClaims, error) {
 	headerAccessToken, err := ExtractJWT(r)
 	if err != nil {
@@ -210,5 +221,12 @@ func ValidateAccessToken(r *http.Request) (*jwt.MapClaims, error) {
 		return nil, &exceptions.ErrUnauthorized{Message: "invalid access token"}
 	}
 	err = ValidateTokenExpiresAt(&accessClaims)
+	if err != nil {
+		return nil, err
+	}
+	err = ValidateTokenDeviceInfo(r, &accessClaims)
+	if err != nil {
+		return nil, err
+	}
 	return &accessClaims, nil
 }
