@@ -57,7 +57,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user)
+	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken)
 	if err != nil {
 		HandleException(w, err)
 		return

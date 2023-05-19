@@ -1,4 +1,7 @@
 {
+    "schemes": [
+        "http"
+    ],
     "swagger": "2.0",
     "info": {
         "description": "API server for auth stuff",
@@ -110,6 +113,14 @@
         },
         "/api/refresh": {
             "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Use the refresh token to get a new access token and to set new refresh token in cookies.",
                 "consumes": [
                     "application/json"
@@ -453,6 +464,11 @@
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-Api-Key",
+            "in": "header"
+        },
+        "JWTAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

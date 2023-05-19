@@ -117,6 +117,14 @@ const docTemplate = `{
         },
         "/api/refresh": {
             "post": {
+                "security": [
+                    {
+                        "JWTAuth": []
+                    },
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Use the refresh token to get a new access token and to set new refresh token in cookies.",
                 "consumes": [
                     "application/json"
@@ -461,6 +469,11 @@ const docTemplate = `{
     "securityDefinitions": {
         "ApiKeyAuth": {
             "type": "apiKey",
+            "name": "X-Api-Key",
+            "in": "header"
+        },
+        "JWTAuth": {
+            "type": "apiKey",
             "name": "Authorization",
             "in": "header"
         }
@@ -472,7 +485,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "v.1.0.0",
 	Host:             "localhost:8080",
 	BasePath:         "/",
-	Schemes:          []string{},
+	Schemes:          []string{"http"},
 	Title:            "Auth Service API",
 	Description:      "API server for auth stuff",
 	InfoInstanceName: "swagger",

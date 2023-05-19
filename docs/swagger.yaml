@@ -187,6 +187,9 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - ApiKeyAuth: []
       summary: Refresh JWT token
       tags:
       - Auth
@@ -316,8 +319,14 @@ paths:
       summary: Get user by ID
       tags:
       - Users
+schemes:
+- http
 securityDefinitions:
   ApiKeyAuth:
+    in: header
+    name: X-Api-Key
+    type: apiKey
+  JWTAuth:
     in: header
     name: Authorization
     type: apiKey

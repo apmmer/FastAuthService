@@ -20,13 +20,15 @@ import (
 // @Tags Auth
 // @Accept  json
 // @Produce  json
+// @security JWTAuth
+// @security ApiKeyAuth
 // @Success 200 {object} schemas.TokenResponse
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
 // @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/refresh [post]
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
-	log.Println("Validating token")
+	log.Println("RefreshTokens: validating tokens")
 	// Extract the refresh token from the request cookies
 	claims, err := ValidateRefreshTokenCookie(r)
 	if err != nil {
@@ -35,7 +37,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the user associated with the refresh token
-	userId, err := strconv.Atoi(claims.Id)
+	userId, err := strconv.Atoi((*claims)["Id"].(string))
 	log.Printf("Got userId = %d", userId)
 	if err != nil {
 		HandleException(w, err)
@@ -49,20 +51,21 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Got user = %v", user)
 
-	// Set Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user)
-	if err != nil {
-		HandleException(w, err)
-		return
-	}
-	http.SetCookie(w, &cookies)
-
 	// Generate a new access token
 	accessToken, err := utils.GenerateAccessToken(user)
 	if err != nil {
 		HandleException(w, err)
 		return
 	}
+
+	// generate and set new Refresh cookies
+	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken)
+	if err != nil {
+		HandleException(w, err)
+		return
+	}
+	http.SetCookie(w, &cookies)
+
 	// Return the new access token
 	err = HandleJsonResponse(w, accessToken)
 	if err != nil {
@@ -70,7 +73,15 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
+func ExtractJWT(r *http.Request) (string, error) {
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		return "", &exceptions.ErrNoAuthData{Message: "Missing Authorization header"}
+	}
+	return authHeader, nil
+}
+
+func ValidateRefreshTokenCookie(r *http.Request) (*jwt.MapClaims, error) {
 	c, err := r.Cookie("refresh_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
@@ -87,8 +98,24 @@ func ValidateRefreshTokenCookie(r *http.Request) (*jwt.StandardClaims, error) {
 	}
 
 	// Check if the refresh token has expired
-	if claims.ExpiresAt < time.Now().Unix() {
-		return nil, &exceptions.ErrUnauthorized{Message: "expired refresh token"}
+	if expiresAtFloat, ok := claims["ExpiresAt"].(float64); ok {
+		expiresAt := int64(expiresAtFloat)
+		if expiresAt < time.Now().Unix() {
+			return nil, &exceptions.ErrUnauthorized{Message: "expired refresh token"}
+		}
+	} else {
+		// Log the unexpected type and value
+		log.Printf("Unexpected type for ExpiresAt claim: %T. Value: %v", claims["ExpiresAt"], claims["ExpiresAt"])
+		return nil, &exceptions.ErrUnauthorized{Message: "invalid ExpiresAt claim in refresh token"}
 	}
-	return claims, nil
+	// compare access tokens
+	cookieAccessToken := claims["AccessToken"].(string)
+	headerAccessToken, err := ExtractJWT(r)
+	if err != nil {
+		return nil, err
+	}
+	if cookieAccessToken != headerAccessToken {
+		return nil, &exceptions.ErrUnauthorized{Message: "a pair of access tokens are not suitable for each other"}
+	}
+	return &claims, nil
 }

@@ -40,14 +40,10 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 // generates exactly JWT token with provided data
-func GenerateJWT(user *models.User, expiresAt int64, issuer string, secret string) (string, error) {
+func GenerateJWT(data *map[string]interface{}, secret string) (string, error) {
 	// Create the claims for the JWT: these are the pieces of data we want to include in the token.
 	// In this case, we are including the standard claims (expiry, issuer) plus the ID of the user.
-	claims := &jwt.StandardClaims{
-		ExpiresAt: expiresAt,
-		Issuer:    issuer,
-		Id:        strconv.Itoa(int(user.ID)),
-	}
+	claims := jwt.MapClaims(*data)
 
 	// Create a new JWT and include the claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -69,7 +65,12 @@ func GenerateJWT(user *models.User, expiresAt int64, issuer string, secret strin
 // The function returns a TokenResponse struct, which includes the JWT itself and its expiration timestamp.
 func GenerateAccessToken(user *models.User) (*schemas.TokenResponse, error) {
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.TokenLifeMinutes)).Unix()
-	tokenString, err := GenerateJWT(user, expiresAt, configs.MainSettings.ServiceName, configs.MainSettings.JwtSecret)
+	claims := map[string]interface{}{
+		"Id":        strconv.Itoa(int(user.ID)),
+		"ExpiresAt": expiresAt,
+		"Issuer":    configs.MainSettings.ServiceName,
+	}
+	tokenString, err := GenerateJWT(&claims, configs.MainSettings.JwtSecret)
 	if err != nil {
 		return nil, err
 	}
@@ -84,10 +85,17 @@ func GenerateAccessToken(user *models.User) (*schemas.TokenResponse, error) {
 }
 
 // GenerateRefreshToken generates a new JWT refresh token for a given user
-func GenerateRefreshCookies(user *models.User) (http.Cookie, error) {
+func GenerateRefreshCookies(user *models.User, accessToken string) (http.Cookie, error) {
 	// Set expiration time for refresh token (longer than access token)
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes)).Unix()
-	tokenString, err := GenerateJWT(user, expiresAt, configs.MainSettings.ServiceName, configs.MainSettings.JwtRefreshSecret)
+	// Note: claims include generated access token
+	claims := map[string]interface{}{
+		"Id":          strconv.Itoa(int(user.ID)),
+		"ExpiresAt":   expiresAt,
+		"Issuer":      configs.MainSettings.ServiceName,
+		"AccessToken": accessToken,
+	}
+	tokenString, err := GenerateJWT(&claims, configs.MainSettings.JwtRefreshSecret)
 	if err != nil {
 		return http.Cookie{}, err
 	}
@@ -105,10 +113,12 @@ func GenerateRefreshCookies(user *models.User) (http.Cookie, error) {
 }
 
 // ParseToken parses a JWT token and returns the claims.
-// The function expects a valid token and a secret key. If the token is not valid or does not contain the expected claims, the function will return an error.
-func ParseToken(tokenString string, secret string) (*jwt.StandardClaims, error) {
+// The function expects a valid token and a secret key.
+// If the token is not valid or does not contain the expected claims,
+// the function will return an error.
+func ParseToken(tokenString string, secret string) (jwt.MapClaims, error) {
 	// Parse the token
-	token, err := jwt.ParseWithClaims(tokenString, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, jwt.MapClaims{}, func(token *jwt.Token) (interface{}, error) {
 		// Make sure that the token method conforms to "SigningMethodHMAC"
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -122,7 +132,7 @@ func ParseToken(tokenString string, secret string) (*jwt.StandardClaims, error) 
 	}
 
 	// If the token is valid, return the claims
-	if claims, ok := token.Claims.(*jwt.StandardClaims); ok && token.Valid {
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
 	} else {
 		return nil, errors.New("invalid token")

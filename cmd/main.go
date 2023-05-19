@@ -14,10 +14,19 @@ import (
 
 // @host localhost:8080
 // @BasePath /
+// @schemes http
+
+// @securityDefinitions.apikey JWTAuth
+// @in header
+// @name Authorization
 
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
-// @name Authorization
+// @name X-Api-Key
+
+// @security JWTAuth
+// @security ApiKeyAuth
+
 func main() {
 
 	database.InitDB(configs.MainSettings.UsersDBURL)
