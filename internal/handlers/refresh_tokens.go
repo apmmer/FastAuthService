@@ -1,17 +1,12 @@
 package handlers
 
 import (
-	"AuthService/configs"
-	"AuthService/internal/exceptions"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
-
-	"github.com/dgrijalva/jwt-go"
 )
 
 // RefreshTokens is a handler function for token refresh requests.
@@ -30,14 +25,19 @@ import (
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	log.Println("RefreshTokens: validating tokens")
 	// Extract the refresh token from the request cookies
-	claims, err := ValidateRefreshTokenCookie(r)
+	headerAccessToken, err := utils.ExtractJWT(r)
+	if err != nil {
+		HandleException(w, err)
+		return
+	}
+	refreshClaims, err := utils.ValidateRefreshTokenCookie(r, headerAccessToken)
 	if err != nil {
 		HandleException(w, err)
 		return
 	}
 
 	// Get the user associated with the refresh token
-	userId, err := strconv.Atoi((*claims)["Id"].(string))
+	userId, err := strconv.Atoi((*refreshClaims)["Id"].(string))
 	log.Printf("Got userId = %d", userId)
 	if err != nil {
 		HandleException(w, err)
@@ -71,51 +71,4 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
-}
-
-func ExtractJWT(r *http.Request) (string, error) {
-	authHeader := r.Header.Get("Authorization")
-	if authHeader == "" {
-		return "", &exceptions.ErrNoAuthData{Message: "Missing Authorization header"}
-	}
-	return authHeader, nil
-}
-
-func ValidateRefreshTokenCookie(r *http.Request) (*jwt.MapClaims, error) {
-	c, err := r.Cookie("refresh_token")
-	if err != nil {
-		if err == http.ErrNoCookie {
-			return nil, &exceptions.ErrNoAuthData{Message: "refresh token is not provided in cookies"}
-		}
-		return nil, err
-	}
-	refreshToken := c.Value
-
-	// Parse the refresh token
-	claims, err := utils.ParseToken(refreshToken, configs.MainSettings.JwtRefreshSecret)
-	if err != nil {
-		return nil, &exceptions.ErrUnauthorized{Message: "invalid refresh token"}
-	}
-
-	// Check if the refresh token has expired
-	if expiresAtFloat, ok := claims["ExpiresAt"].(float64); ok {
-		expiresAt := int64(expiresAtFloat)
-		if expiresAt < time.Now().Unix() {
-			return nil, &exceptions.ErrUnauthorized{Message: "expired refresh token"}
-		}
-	} else {
-		// Log the unexpected type and value
-		log.Printf("Unexpected type for ExpiresAt claim: %T. Value: %v", claims["ExpiresAt"], claims["ExpiresAt"])
-		return nil, &exceptions.ErrUnauthorized{Message: "invalid ExpiresAt claim in refresh token"}
-	}
-	// compare access tokens
-	cookieAccessToken := claims["AccessToken"].(string)
-	headerAccessToken, err := ExtractJWT(r)
-	if err != nil {
-		return nil, err
-	}
-	if cookieAccessToken != headerAccessToken {
-		return nil, &exceptions.ErrUnauthorized{Message: "a pair of access tokens are not suitable for each other"}
-	}
-	return &claims, nil
 }

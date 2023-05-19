@@ -319,6 +319,37 @@ paths:
       summary: Get user by ID
       tags:
       - Users
+  /api/validate:
+    post:
+      consumes:
+      - application/json
+      description: Use the refresh token to get a new access token and to set new
+        refresh token in cookies.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "401":
+          description: Error returned when the provided auth data is invalid
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "403":
+          description: Error returned when auth data was not provided
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - JWTAuth: []
+      - ApiKeyAuth: []
+      summary: Validates access for current logged in client
+      tags:
+      - Auth
 schemes:
 - http
 securityDefinitions:
