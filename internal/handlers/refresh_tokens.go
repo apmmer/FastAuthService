@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"AuthService/configs"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 // RefreshTokens is a handler function for token refresh requests.
@@ -35,7 +37,9 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
-	ValidateSession or UpdateSession directly
+	// ValidateSession or UpdateSession directly
+	// *
+	// ...
 
 	// Get the user associated with the refresh token
 	userId, err := strconv.Atoi((*refreshClaims)["Id"].(string))
@@ -55,6 +59,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	// getting device info
 	deviceInfo := utils.GetDeviceInfo(r)
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
+	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
 
 	// Generate a new access token
 	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
@@ -63,8 +68,8 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// generate and set new Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, (*refreshClaims)["SessionToken"].(string))
+	// generate and set new Refresh cookies using old session token
+	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, (*refreshClaims)["SessionToken"].(string), &expiresAt)
 	if err != nil {
 		HandleException(w, err)
 		return

@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 )
 
 // Login godoc
@@ -64,10 +65,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionToken, err := utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
-	sessions_repo.CreateSession()
-
+	// generate the expiration date for both session and refreshToken
+	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
+	sess, err := sessions_repo.CreateSession(user.ID, sessionToken, &expiresAt)
+	if err != nil {
+		HandleException(w, err)
+		return
+	}
 	// Set Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken)
+	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken, &sess.ExpiresAt)
 	if err != nil {
 		HandleException(w, err)
 		return

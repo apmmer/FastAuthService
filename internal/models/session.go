@@ -26,7 +26,12 @@ type UserSession struct {
 	// @Property example: "2023-05-19T12:34:56Z"
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 
+	// ExpiresAt represents the expiration time of the session.
+	// @Property format: date-time
+	// @Property example: "2023-05-19T12:34:56Z"
+	ExpiresAt time.Time `json:"expires_at" db:"expires_at"`
+
 	// DeletedAt represents the timestamp when session was closed.
 	// @Property deleted_at string "DeletedAt" format(date-time)
-	DeletedAt *time.Time `db:"deleted_at" sql:"index"`
+	DeletedAt *time.Time `json:"deleted_at" db:"deleted_at" sql:"index"`
 }
