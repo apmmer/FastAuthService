@@ -4,6 +4,7 @@ import (
 	"AuthService/database"
 	"AuthService/internal/exceptions"
 	"AuthService/internal/utils"
+	base_repo_utils "AuthService/internal/utils/base_repo"
 	"context"
 	"fmt"
 	"log"
@@ -50,48 +51,31 @@ func CreateOne(tableName string, fields []string, values []interface{}) (int, er
 	return id, nil
 }
 
-func ParseSQLFilters(filters *map[string]interface{}) (string, []interface{}, error) {
-	filterStr := ""
+func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderingDirection *string, filters *map[string]interface{}) ([]map[string]interface{}, error) {
+	fmt.Printf("Called base_repo.GetMany filters=%v", filters)
+	sql := fmt.Sprintf("SELECT * FROM %s", tableName)
 	var args []interface{}
 
-	if filters != nil && len(*filters) > 0 {
-		// Avoid SQL injection by using placeholders and passing values separately
-		for field, value := range *filters {
-			// If we filter by value=nil, it means we want to filter by field=NULL.
-			if value == nil {
-				filterStr += fmt.Sprintf(" %s IS NULL AND", field)
-			} else {
-				args = append(args, value)
-				filterStr += fmt.Sprintf(" %s = $%d AND", field, len(args))
-			}
-		}
-		filterStr = strings.TrimSuffix(filterStr, " AND") // Remove the trailing ' AND'
-	}
-
-	return filterStr, args, nil
-}
-
-func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderingDirection *string, filters *map[string]interface{}) ([]map[string]interface{}, error) {
-	sql := fmt.Sprintf("SELECT * FROM %s", tableName)
-
-	filterStr, args, err := ParseSQLFilters(filters)
+	filterStr, args, err := base_repo_utils.ParseSQLFilters(filters, &args)
 	if err != nil {
 		return nil, &exceptions.ErrInvalidEntity{
 			Message: fmt.Sprintf("failed to validate filters: %v", err),
 		}
 	}
-
 	if filterStr != "" {
 		sql += " WHERE" + filterStr
 	}
 
 	if orderBy != nil {
-		args = append(args, *orderBy)
 		sql += fmt.Sprintf(" ORDER BY %s", *orderBy)
-
 		if orderingDirection != nil {
-			args = append(args, *orderingDirection)
-			sql += fmt.Sprintf(" $%d", len(args))
+			direction := strings.ToUpper(*orderingDirection)
+			if direction != "ASC" && direction != "DESC" {
+				return nil, &exceptions.ErrInvalidEntity{
+					Message: fmt.Sprintf("Invalid order direction: %s", direction),
+				}
+			}
+			sql += fmt.Sprintf(" %s", direction)
 		}
 	}
 
@@ -112,25 +96,18 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 	}
 	defer rows.Close()
 
-	var results []map[string]interface{}
-	for rows.Next() {
-		values, err := rows.Values()
-		if err != nil {
-			return nil, fmt.Errorf("could not get row values: %v", err)
-		}
-
-		item := make(map[string]interface{})
-		for i, fd := range rows.FieldDescriptions() {
-			item[string(fd.Name)] = values[i]
-		}
-		results = append(results, item)
+	results, err := base_repo_utils.ParseSQLResults(&rows)
+	if err != nil {
+		errMsg := fmt.Sprintf("could not parse SQL results from %s table", tableName)
+		return nil, utils.UpdateExceptionMsg(errMsg, err)
 	}
 
-	return results, nil
+	return *results, nil
 }
 
 // Retrieves 1 record from the table according filters, else returns an error.
 func GetOne(tableName string, filters *map[string]interface{}) (map[string]interface{}, error) {
+	fmt.Println("Called base_repo.GetOne")
 	// retirving records using GetMany method
 	records, err := GetMany(tableName, nil, nil, nil, nil, filters)
 	log.Printf("base_repo.GetOne: Got %d records using GetMany", len(records))
@@ -138,7 +115,7 @@ func GetOne(tableName string, filters *map[string]interface{}) (map[string]inter
 		return nil, utils.UpdateExceptionMsg("could not perform GetMany method", err)
 	}
 	// we expect that we have only 1 record, so validate:
-	if records != nil && len(records) == 0 || len(records) == 0 {
+	if records == nil || len(records) == 0 {
 		return nil, &exceptions.ErrNotFound{Message: "got no records according filters."}
 	}
 	if len(records) > 1 {

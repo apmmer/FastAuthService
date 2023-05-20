@@ -206,26 +206,26 @@ func ValidateTokenDeviceInfo(r *http.Request, accessClaims *jwt.MapClaims) error
 	return nil
 }
 
-func ValidateAccessToken(r *http.Request) (*jwt.MapClaims, error) {
+func ValidateAccessToken(r *http.Request) (*jwt.MapClaims, *jwt.MapClaims, error) {
 	headerAccessToken, err := ExtractJWT(r)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	_, err = ValidateRefreshTokenCookie(r, headerAccessToken)
+	refreshClaims, err := ValidateRefreshTokenCookie(r, headerAccessToken)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	accessClaims, err := ParseToken(headerAccessToken, configs.MainSettings.JwtSecret)
 	if err != nil {
-		return nil, &exceptions.ErrUnauthorized{Message: "invalid access token"}
+		return nil, nil, &exceptions.ErrUnauthorized{Message: "invalid access token"}
 	}
 	err = ValidateTokenExpiresAt(&accessClaims)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	err = ValidateTokenDeviceInfo(r, &accessClaims)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return &accessClaims, nil
+	return &accessClaims, refreshClaims, nil
 }

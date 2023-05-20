@@ -6,30 +6,21 @@ import (
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/schemas"
 	"AuthService/internal/utils"
+	"fmt"
 )
 
 func GetManyUsers(params schemas.ListParams) ([]models.User, error) {
+	fmt.Println("Called GetManyUsers")
 	var users []models.User
 
 	// Use the ParseSorting function to extract the sorting field and direction
 	sortingField, sortingDirection := utils.ParseSorting(params.Sorting)
 
-	// Prepare parameters for base_repo.GetMany function
-	limit := params.Limit
-	if limit != nil {
-		*limit = int(*limit)
-	}
-
-	offset := params.Offset
-	if offset != nil {
-		*offset = int(*offset)
-	}
-
 	// Call the base_repo.GetMany function
 	results, err := base_repo.GetMany(
 		configs.MainSettings.UsersTableName,
-		limit,
-		offset,
+		params.Limit,
+		params.Offset,
 		sortingField,
 		sortingDirection,
 		nil,

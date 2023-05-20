@@ -38,19 +38,17 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log_string := fmt.Sprintf("%d", *params)
-	log.Println("Ready to call repository, params = ." + log_string)
+	log.Printf("Ready to call user_repo, params = %v.", *params)
 	// Call GetManyUsers from the repo
 	users, err := user_repo.GetManyUsers(*params)
 	if err != nil {
 		HandleException(w, err)
 		return
 	}
-	log.Println("Successfully got result from user_repo.GetManyUsers")
+	log.Printf("Successfully got users = %v", users)
 
 	// Setting the status 200
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
 
 	// Prepare response
 	err = HandleJsonResponse(w, users)

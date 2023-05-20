@@ -9,27 +9,9 @@ import (
 	"fmt"
 )
 
-// Checks if filters are correct for models.User
-func validateUserFilters(filters *map[string]interface{}) error {
-	model_fields := utils.GetModelFields(models.User{})
-	for key := range *filters {
-		field_found := false
-		for _, fieldname := range model_fields {
-			if key == fieldname {
-				field_found = true
-				break
-			}
-		}
-		if !field_found {
-			return fmt.Errorf("field %s was not found in User model", key)
-		}
-	}
-	return nil
-}
-
 // Retrieves a data from DB according filters and returns created User object.
 func GetUser(filters *map[string]interface{}) (*models.User, error) {
-	err := validateUserFilters(filters)
+	err := utils.ValidateMapFields(filters, models.User{})
 	if err != nil {
 		return nil, &exceptions.ErrInvalidEntity{Message: fmt.Sprintf("failed to validate filters: %v", err)}
 	}

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/utils"
 	"fmt"
 	"log"
@@ -26,7 +27,7 @@ import (
 func Logout(w http.ResponseWriter, r *http.Request) {
 	// AccessToken validation
 	log.Println("Logout: validating access token")
-	accessClaims, err := utils.ValidateAccessToken(r)
+	accessClaims, refreshClaims, err := utils.ValidateAccessToken(r)
 	if err != nil {
 		HandleException(w, err)
 		return
@@ -37,7 +38,21 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
+	refreshToken := (*refreshClaims)["SessionToken"].(string)
 	// here we will perform user session update, but next time
+	_, err = sessions_repo.UpdateSessions(
+		&map[string]interface{}{
+			"token":      refreshToken,
+			"deleted_at": nil,
+		},
+		&map[string]interface{}{
+			"deleted_at": time.Now(),
+		},
+	)
+	if err != nil {
+		ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
+		return
+	}
 
 	// here we delete cookies:
 	cookies := http.Cookie{

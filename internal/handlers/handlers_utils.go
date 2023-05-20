@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"reflect"
 )
 
 func ErrorResponse(w http.ResponseWriter, message string, httpStatusCode int) {
@@ -44,6 +45,13 @@ func HandleException(w http.ResponseWriter, err error) {
 
 func HandleJsonResponse(w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
+
+	// Empty slice checking:
+	v := reflect.ValueOf(data)
+	if v.Kind() == reflect.Slice && v.IsNil() {
+		data = reflect.MakeSlice(v.Type(), 0, 0).Interface()
+	}
+
 	if configs.MainSettings.Debug == "true" {
 		prettyJSON, err := json.MarshalIndent(data, "", "  ")
 		if err != nil {
