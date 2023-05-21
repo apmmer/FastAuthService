@@ -1,4 +1,4 @@
-package utils
+package repositories_utils
 
 import (
 	"AuthService/internal/exceptions"

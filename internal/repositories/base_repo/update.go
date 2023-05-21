@@ -2,8 +2,8 @@ package base_repo
 
 import (
 	"AuthService/database"
+	"AuthService/internal/repositories/base_repo/base_repo_utils"
 	"AuthService/internal/utils"
-	base_repo_utils "AuthService/internal/utils/base_repo"
 	"context"
 	"fmt"
 	"strings"

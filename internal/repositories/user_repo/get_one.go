@@ -5,13 +5,13 @@ import (
 	"AuthService/internal/exceptions"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
-	"AuthService/internal/utils"
+	"AuthService/internal/repositories/repositories_utils"
 	"fmt"
 )
 
 // Retrieves a data from DB according filters and returns created User object.
 func GetUser(filters *map[string]interface{}) (*models.User, error) {
-	err := utils.ValidateMapFields(filters, models.User{})
+	err := repositories_utils.ValidateMapFields(filters, models.User{})
 	if err != nil {
 		return nil, &exceptions.ErrInvalidEntity{Message: fmt.Sprintf("failed to validate filters: %v", err)}
 	}

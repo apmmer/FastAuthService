@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"AuthService/internal/handlers/handlers_utils"
-	"AuthService/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
@@ -24,7 +23,7 @@ import (
 // @Router /api/validate [post]
 func ValidateAccess(w http.ResponseWriter, r *http.Request) {
 	log.Println("ValidateAccess: validating access token")
-	accessClaims, _, err := utils.ValidateAccessToken(r)
+	accessClaims, _, err := handlers_utils.ValidateAccessToken(r)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return

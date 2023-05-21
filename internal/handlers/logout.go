@@ -4,7 +4,6 @@ import (
 	"AuthService/configs"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
-	"AuthService/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
@@ -28,7 +27,7 @@ import (
 func Logout(w http.ResponseWriter, r *http.Request) {
 	// AccessToken validation
 	log.Println("Logout: validating access token")
-	accessClaims, refreshClaims, err := utils.ValidateAccessToken(r)
+	accessClaims, refreshClaims, err := handlers_utils.ValidateAccessToken(r)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return

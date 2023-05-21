@@ -4,6 +4,7 @@ import (
 	"AuthService/configs"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
+	"AuthService/internal/repositories/repositories_utils"
 	"AuthService/internal/utils"
 	"log"
 	"time"
@@ -20,7 +21,7 @@ func CreateSession(userID uint, token string, expiresAt *time.Time) (*models.Use
 	}
 	// prepare data for db insertion
 	ignore_field := "id"
-	fields, values := utils.GetFieldsAndValues(session, ignore_field)
+	fields, values := repositories_utils.GetFieldsAndValues(session, ignore_field)
 	// insert the data
 	id, err := base_repo.CreateOne(
 		configs.MainSettings.SessionsTableName, fields, values)

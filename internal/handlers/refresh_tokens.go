@@ -5,7 +5,6 @@ import (
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/repositories/user_repo"
-	"AuthService/internal/utils"
 	"fmt"
 	"log"
 	"net/http"
@@ -29,12 +28,12 @@ import (
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	log.Println("RefreshTokens: validating tokens")
 	// Extract the refresh token from the request cookies
-	headerAccessToken, err := utils.ExtractJWT(r)
+	headerAccessToken, err := handlers_utils.ExtractJWT(r)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
 	}
-	refreshClaims, err := utils.ValidateRefreshTokenCookie(r, headerAccessToken)
+	refreshClaims, err := handlers_utils.ValidateRefreshTokenCookie(r, headerAccessToken)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
@@ -78,18 +77,18 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// getting device info
-	deviceInfo := utils.GetDeviceInfo(r)
+	deviceInfo := handlers_utils.GetDeviceInfo(r)
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
 
 	// Generate a new access token
-	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
+	accessToken, err := handlers_utils.GenerateAccessToken(user, &deviceInfo)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
 	}
 
 	// generate and set new Refresh cookies using old session token
-	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, (*refreshClaims)["SessionToken"].(string), &expiresAt)
+	cookies, err := handlers_utils.GenerateRefreshCookies(user, accessToken.AccessToken, (*refreshClaims)["SessionToken"].(string), &expiresAt)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return

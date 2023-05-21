@@ -5,6 +5,7 @@ import (
 	"AuthService/internal/exceptions"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
+	"AuthService/internal/repositories/repositories_utils"
 	"AuthService/internal/utils"
 	"fmt"
 	"time"
@@ -12,12 +13,12 @@ import (
 
 func UpdateSessions(filters *map[string]interface{}, updateData *map[string]interface{}) (*[]models.UserSession, error) {
 	// validate filters
-	err := utils.ValidateMapFields(filters, models.UserSession{})
+	err := repositories_utils.ValidateMapFields(filters, models.UserSession{})
 	if err != nil {
 		return nil, utils.UpdateExceptionMsg("failed to validate filters", err)
 	}
 	// validate updateData
-	err = utils.ValidateMapFields(updateData, models.UserSession{})
+	err = repositories_utils.ValidateMapFields(updateData, models.UserSession{})
 	if err != nil {
 		return nil, utils.UpdateExceptionMsg("failed to validate filters", err)
 	}

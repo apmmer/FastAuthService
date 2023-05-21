@@ -4,8 +4,8 @@ import (
 	"AuthService/configs"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
+	"AuthService/internal/repositories/repositories_utils"
 	"AuthService/internal/schemas"
-	"AuthService/internal/utils"
 	"fmt"
 )
 
@@ -14,7 +14,7 @@ func GetManyUsers(params schemas.ListParams) ([]models.User, error) {
 	var users []models.User
 
 	// Use the ParseSorting function to extract the sorting field and direction
-	sortingField, sortingDirection := utils.ParseSorting(params.Sorting)
+	sortingField, sortingDirection := repositories_utils.ParseSorting(params.Sorting)
 
 	// Call the base_repo.GetMany function
 	results, err := base_repo.GetMany(

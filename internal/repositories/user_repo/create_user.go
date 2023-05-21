@@ -2,8 +2,10 @@ package user_repo
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
+	"AuthService/internal/repositories/repositories_utils"
 	"AuthService/internal/schemas"
 	"AuthService/internal/utils"
 	"fmt"
@@ -14,7 +16,7 @@ import (
 // CreateUser creates a new user in the database
 func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 
-	hashedPassword, err := utils.HashPassword(request.Password)
+	hashedPassword, err := general_utils.HashPassword(request.Password)
 	if err != nil {
 		return nil, fmt.Errorf("could not encrypt password: %v", err)
 	}
@@ -28,7 +30,7 @@ func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 
 	// prepare data for db insertion
 	ignore_field := "id"
-	fields, values := utils.GetFieldsAndValues(user, ignore_field)
+	fields, values := repositories_utils.GetFieldsAndValues(user, ignore_field)
 
 	log.Println("Calling base_repo.CreateOne")
 	// Calling the CreateOne function from base_repo

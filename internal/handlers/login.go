@@ -48,18 +48,18 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Проверяем, соответствует ли предоставленный пароль хешу пароля
-	isValid := utils.CheckPasswordHash(input.Password, user.Password)
+	isValid := handlers_utils.CheckPasswordHash(input.Password, user.Password)
 	if !isValid {
 		handlers_utils.ErrorResponse(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
 	// getting device info
-	deviceInfo := utils.GetDeviceInfo(r)
+	deviceInfo := handlers_utils.GetDeviceInfo(r)
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
 
 	// Генерируем токен доступа
-	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
+	accessToken, err := handlers_utils.GenerateAccessToken(user, &deviceInfo)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
@@ -74,7 +74,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Set Refresh cookies
-	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken, &sess.ExpiresAt)
+	cookies, err := handlers_utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken, &sess.ExpiresAt)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
