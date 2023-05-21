@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/utils"
 	"fmt"
@@ -37,9 +38,6 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
-	// ValidateSession or UpdateSession directly
-	// *
-	// ...
 
 	// Get the user associated with the refresh token
 	userId, err := strconv.Atoi((*refreshClaims)["Id"].(string))
@@ -48,6 +46,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		HandleException(w, err)
 		return
 	}
+
 	// Retrieve user. Currently it is not necessary, but in future - yes.
 	user, err := user_repo.GetActiveUserById(userId)
 	if err != nil {
@@ -56,10 +55,30 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Got user = %v", user)
 
+	// Update session directly
+	// Session expires in the same time as new refresh token
+	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
+	sessions, err := sessions_repo.UpdateSessions(
+		&map[string]interface{}{
+			"token":      (*refreshClaims)["SessionToken"].(string),
+			"deleted_at": nil,
+			"user_id":    (*user).ID,
+		},
+		&map[string]interface{}{
+			"expires_at": expiresAt,
+		},
+	)
+	if err != nil {
+		ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
+		return
+	}
+	if len(*sessions) != 1 {
+		ErrorResponse(w, "Found unexpected user session, please log in again.", http.StatusInternalServerError)
+	}
+
 	// getting device info
 	deviceInfo := utils.GetDeviceInfo(r)
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
-	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
 
 	// Generate a new access token
 	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
