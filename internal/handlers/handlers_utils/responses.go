@@ -17,28 +17,27 @@ func ErrorResponse(w http.ResponseWriter, message string, httpStatusCode int) {
 }
 
 func HandleException(w http.ResponseWriter, err error) {
-	log.Println("HandleException...")
 	switch err.(type) {
 	case *exceptions.ErrNotFound:
-		log.Println("ErrNotFound...")
+		log.Println("HandleException: ErrNotFound...")
 		ErrorResponse(w, err.Error(), http.StatusNotFound)
 	case *exceptions.ErrMultipleEntries:
-		log.Println("ErrMultipleEntries...")
+		log.Println("HandleException: ErrMultipleEntries...")
 		ErrorResponse(w, err.Error(), http.StatusNotAcceptable)
 	case *exceptions.ErrInvalidEntity:
-		log.Println("ErrInvalidEntity...")
+		log.Println("HandleException: ErrInvalidEntity...")
 		ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
 	case *exceptions.ErrDbConflict:
-		log.Println("ErrDbConflict...")
+		log.Println("HandleException: ErrDbConflict...")
 		ErrorResponse(w, err.Error(), http.StatusConflict)
 	case *exceptions.ErrNoAuthData:
-		log.Println("ErrNoAuthData...")
+		log.Println("HandleException: ErrNoAuthData...")
 		ErrorResponse(w, err.Error(), http.StatusForbidden)
 	case *exceptions.ErrUnauthorized:
-		log.Println("ErrUnauthorized...")
+		log.Println("HandleException: ErrUnauthorized...")
 		ErrorResponse(w, err.Error(), http.StatusUnauthorized)
 	default:
-		log.Println("default Exception...")
+		log.Println("HandleException: default Exception...")
 		ErrorResponse(w, "Server can not process your request", http.StatusInternalServerError)
 	}
 }

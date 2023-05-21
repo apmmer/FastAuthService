@@ -62,7 +62,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		&map[string]interface{}{
 			"token":      (*refreshClaims)["SessionToken"].(string),
 			"deleted_at": nil,
-			"user_id":    (*user).ID,
+			"user_id":    userId,
 		},
 		&map[string]interface{}{
 			"expires_at": expiresAt,

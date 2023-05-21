@@ -3,8 +3,8 @@ package base_repo
 import (
 	"AuthService/database"
 	"AuthService/internal/exceptions"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/repositories/base_repo/base_repo_utils"
-	"AuthService/internal/utils"
 	"context"
 	"fmt"
 	"log"
@@ -99,7 +99,7 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 	results, err := base_repo_utils.ParseSQLResults(&rows)
 	if err != nil {
 		errMsg := fmt.Sprintf("could not parse SQL results from %s table", tableName)
-		return nil, utils.UpdateExceptionMsg(errMsg, err)
+		return nil, general_utils.UpdateExceptionMsg(errMsg, err)
 	}
 
 	return *results, nil
@@ -112,7 +112,7 @@ func GetOne(tableName string, filters *map[string]interface{}) (map[string]inter
 	records, err := GetMany(tableName, nil, nil, nil, nil, filters)
 	log.Printf("base_repo.GetOne: Got %d records using GetMany", len(records))
 	if err != nil {
-		return nil, utils.UpdateExceptionMsg("could not perform GetMany method", err)
+		return nil, general_utils.UpdateExceptionMsg("could not perform GetMany method", err)
 	}
 	// we expect that we have only 1 record, so validate:
 	if records == nil || len(records) == 0 {

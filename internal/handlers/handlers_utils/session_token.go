@@ -1,4 +1,4 @@
-package utils
+package handlers_utils
 
 import (
 	"AuthService/internal/schemas"

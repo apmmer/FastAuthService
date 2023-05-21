@@ -2,10 +2,10 @@ package sessions_repo
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
-	"AuthService/internal/utils"
 	"log"
 	"time"
 )
@@ -26,7 +26,7 @@ func CreateSession(userID uint, token string, expiresAt *time.Time) (*models.Use
 	id, err := base_repo.CreateOne(
 		configs.MainSettings.SessionsTableName, fields, values)
 	if err != nil {
-		err = utils.UpdateExceptionMsg("failed to create session", err)
+		err = general_utils.UpdateExceptionMsg("failed to create session", err)
 		return nil, err
 	}
 	// id edition

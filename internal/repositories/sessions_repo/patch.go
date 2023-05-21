@@ -3,10 +3,10 @@ package sessions_repo
 import (
 	"AuthService/configs"
 	"AuthService/internal/exceptions"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
-	"AuthService/internal/utils"
 	"fmt"
 	"time"
 )
@@ -15,12 +15,12 @@ func UpdateSessions(filters *map[string]interface{}, updateData *map[string]inte
 	// validate filters
 	err := repositories_utils.ValidateMapFields(filters, models.UserSession{})
 	if err != nil {
-		return nil, utils.UpdateExceptionMsg("failed to validate filters", err)
+		return nil, general_utils.UpdateExceptionMsg("failed to validate filters", err)
 	}
 	// validate updateData
 	err = repositories_utils.ValidateMapFields(updateData, models.UserSession{})
 	if err != nil {
-		return nil, utils.UpdateExceptionMsg("failed to validate filters", err)
+		return nil, general_utils.UpdateExceptionMsg("failed to validate filters", err)
 	}
 	// call update returning updated items (type *[]map[string]interface{})
 	results, err := base_repo.Update(
@@ -30,7 +30,7 @@ func UpdateSessions(filters *map[string]interface{}, updateData *map[string]inte
 	)
 	if err != nil {
 		fmt.Println("failed to update sessions")
-		return nil, utils.UpdateExceptionMsg("failed to update sessions", err)
+		return nil, general_utils.UpdateExceptionMsg("failed to update sessions", err)
 	}
 	if len(*results) == 0 {
 		fmt.Println("sessions not found")

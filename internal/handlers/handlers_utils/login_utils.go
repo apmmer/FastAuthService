@@ -13,17 +13,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"golang.org/x/crypto/bcrypt"
 )
-
-// CheckPasswordHash compares a provided password with a hashed password and returns a boolean result.
-// It uses the bcrypt library's CompareHashAndPassword function to do this.
-// The provided password is hashed and then compared to the stored hashed password.
-// If the two hashed passwords match, the function returns true. Otherwise, it returns false.
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
-}
 
 // generates exactly JWT token with provided data
 func GenerateJWT(data *map[string]interface{}, secret string) (string, error) {

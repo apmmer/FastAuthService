@@ -1,4 +1,4 @@
-package utils
+package general_utils
 
 import (
 	"AuthService/internal/exceptions"

@@ -7,7 +7,6 @@ import (
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
 	"AuthService/internal/schemas"
-	"AuthService/internal/utils"
 	"fmt"
 	"log"
 	"time"
@@ -16,7 +15,7 @@ import (
 // CreateUser creates a new user in the database
 func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 
-	hashedPassword, err := general_utils.HashPassword(request.Password)
+	hashedPassword, err := general_utils.GetHash(request.Password)
 	if err != nil {
 		return nil, fmt.Errorf("could not encrypt password: %v", err)
 	}
@@ -37,7 +36,7 @@ func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 	id, err := base_repo.CreateOne(
 		configs.MainSettings.UsersTableName, fields, values)
 	if err != nil {
-		err = utils.UpdateExceptionMsg("failed to create user", err)
+		err = general_utils.UpdateExceptionMsg("failed to create user", err)
 		return nil, err
 	}
 	// Setting the generated ID to the user model

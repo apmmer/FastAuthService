@@ -2,11 +2,11 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
-	"AuthService/internal/utils"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -48,7 +48,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Проверяем, соответствует ли предоставленный пароль хешу пароля
-	isValid := handlers_utils.CheckPasswordHash(input.Password, user.Password)
+	isValid := general_utils.CheckHash(input.Password, user.Password)
 	if !isValid {
 		handlers_utils.ErrorResponse(w, "Invalid username or password", http.StatusUnauthorized)
 		return
@@ -65,7 +65,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	sessionToken, err := utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
+	sessionToken, err := handlers_utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
 	// generate the expiration date for both session and refreshToken
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
 	sess, err := sessions_repo.CreateSession(user.ID, sessionToken, &expiresAt)
