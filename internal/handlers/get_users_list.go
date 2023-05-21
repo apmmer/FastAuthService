@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
 	"fmt"
@@ -34,7 +35,7 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 		limitStr, offsetStr, sortStr,
 	)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 
@@ -42,7 +43,7 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	// Call GetManyUsers from the repo
 	users, err := user_repo.GetManyUsers(*params)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	log.Printf("Successfully got users = %v", users)
@@ -51,8 +52,8 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
 	// Prepare response
-	err = HandleJsonResponse(w, users)
+	err = handlers_utils.HandleJsonResponse(w, users)
 	if err != nil {
-		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

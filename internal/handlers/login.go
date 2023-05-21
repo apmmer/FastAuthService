@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
@@ -32,7 +33,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	var input schemas.LoginInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusBadRequest)
+		handlers_utils.ErrorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -42,14 +43,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	filters["deleted_at"] = nil
 	user, err := user_repo.GetUser(&filters)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 
 	// Проверяем, соответствует ли предоставленный пароль хешу пароля
 	isValid := utils.CheckPasswordHash(input.Password, user.Password)
 	if !isValid {
-		ErrorResponse(w, "Invalid username or password", http.StatusUnauthorized)
+		handlers_utils.ErrorResponse(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
@@ -60,7 +61,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Генерируем токен доступа
 	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 
@@ -69,20 +70,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
 	sess, err := sessions_repo.CreateSession(user.ID, sessionToken, &expiresAt)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	// Set Refresh cookies
 	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken, &sess.ExpiresAt)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	http.SetCookie(w, &cookies)
 
 	// Возвращаем токен в ответе
-	err = HandleJsonResponse(w, accessToken)
+	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

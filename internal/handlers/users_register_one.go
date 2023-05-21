@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/schemas"
 	"encoding/json"
@@ -29,7 +30,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Decoding the request body into the CreateUserRequest structure
 	err := json.NewDecoder(r.Body).Decode(&userReq)
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusBadRequest)
+		handlers_utils.ErrorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	log.Println("Decoded to CreateUserRequest")
@@ -37,7 +38,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Validation
 	err = userReq.Validate()
 	if err != nil {
-		ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
+		handlers_utils.ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -45,7 +46,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	userRes, err := user_repo.CreateUser(userReq)
 	if err != nil {
 		log.Println("Faced an error in user_repo.CreateUser")
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	// Setting the status 201
@@ -53,7 +54,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	// Sending the data of the created user to the client in JSON format
-	err = HandleJsonResponse(w, userRes)
+	err = handlers_utils.HandleJsonResponse(w, userRes)
 	if err != nil {
 		log.Println("Error while handling JSON response:", err)
 	}

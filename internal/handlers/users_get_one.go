@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/user_repo"
 	"fmt"
 	"log"
@@ -31,7 +32,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 	user, err := user_repo.GetUser(&filters)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	log.Println("Successfully got result from user_repo.GetUser")
@@ -39,8 +40,8 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
 
-	err = HandleJsonResponse(w, user)
+	err = handlers_utils.HandleJsonResponse(w, user)
 	if err != nil {
-		ErrorResponse(w, fmt.Sprintf("Error while handling JSON response: %v", err), http.StatusInternalServerError)
+		handlers_utils.ErrorResponse(w, fmt.Sprintf("Error while handling JSON response: %v", err), http.StatusInternalServerError)
 	}
 }

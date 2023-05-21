@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/utils"
 	"fmt"
@@ -29,13 +30,13 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	log.Println("Logout: validating access token")
 	accessClaims, refreshClaims, err := utils.ValidateAccessToken(r)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	userId, err := strconv.Atoi((*accessClaims)["Id"].(string))
 	log.Printf("Got userId = %d", userId)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	refreshToken := (*refreshClaims)["SessionToken"].(string)
@@ -50,7 +51,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 	if err != nil {
-		ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
+		handlers_utils.ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
 		return
 	}
 
@@ -68,8 +69,8 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	// prepare response
 	responseMsg := fmt.Sprintf("Successfully logged out user with ID #%d", userId)
-	err = HandleJsonResponse(w, responseMsg)
+	err = handlers_utils.HandleJsonResponse(w, responseMsg)
 	if err != nil {
-		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

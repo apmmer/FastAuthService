@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/repositories/user_repo"
 	"AuthService/internal/utils"
@@ -30,12 +31,12 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	// Extract the refresh token from the request cookies
 	headerAccessToken, err := utils.ExtractJWT(r)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	refreshClaims, err := utils.ValidateRefreshTokenCookie(r, headerAccessToken)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 
@@ -43,14 +44,14 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	userId, err := strconv.Atoi((*refreshClaims)["Id"].(string))
 	log.Printf("Got userId = %d", userId)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 
 	// Retrieve user. Currently it is not necessary, but in future - yes.
 	user, err := user_repo.GetActiveUserById(userId)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	log.Printf("Got user = %v", user)
@@ -69,11 +70,11 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 	if err != nil {
-		ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
+		handlers_utils.ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
 		return
 	}
 	if len(*sessions) != 1 {
-		ErrorResponse(w, "Found unexpected user session, please log in again.", http.StatusInternalServerError)
+		handlers_utils.ErrorResponse(w, "Found unexpected user session, please log in again.", http.StatusInternalServerError)
 	}
 
 	// getting device info
@@ -83,21 +84,21 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	// Generate a new access token
 	accessToken, err := utils.GenerateAccessToken(user, &deviceInfo)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 
 	// generate and set new Refresh cookies using old session token
 	cookies, err := utils.GenerateRefreshCookies(user, accessToken.AccessToken, (*refreshClaims)["SessionToken"].(string), &expiresAt)
 	if err != nil {
-		HandleException(w, err)
+		handlers_utils.HandleException(w, err)
 		return
 	}
 	http.SetCookie(w, &cookies)
 
 	// Return the new access token
-	err = HandleJsonResponse(w, accessToken)
+	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

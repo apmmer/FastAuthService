@@ -1,4 +1,4 @@
-package handlers
+package handlers_utils
 
 import (
 	"AuthService/configs"
