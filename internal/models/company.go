@@ -14,9 +14,9 @@ import "time"
 // @Property updated_at string "UpdatedAt" format(date-time) example("2023-05-18T18:57:39Z")
 // @Property deleted_at string "DeletedAt" format(date-time)
 type Company struct {
-	ID        uint       `db:"id" gorm:"primaryKey"`
-	Name      string     `db:"name"`
-	CreatedAt time.Time  `db:"created_at"`
-	UpdatedAt time.Time  `db:"updated_at"`
-	DeletedAt *time.Time `db:"deleted_at" sql:"index"`
+	ID        uint       `json:"id" db:"id" gorm:"primaryKey"`
+	Name      string     `json:"name" db:"name"`
+	CreatedAt time.Time  `json:"created_at" db:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at" db:"updated_at"`
+	DeletedAt *time.Time `json:"deleted_at" db:"deleted_at" sql:"index"`
 }

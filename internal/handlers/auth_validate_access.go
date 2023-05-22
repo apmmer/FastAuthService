@@ -23,7 +23,7 @@ import (
 // @Router /api/validate [post]
 func ValidateAccess(w http.ResponseWriter, r *http.Request) {
 	log.Println("ValidateAccess: validating access token")
-	accessClaims, _, err := handlers_utils.ValidateAccessToken(r)
+	accessClaims, _, err := handlers_utils.ValidateAccessTokenHeader(r)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return

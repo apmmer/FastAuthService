@@ -8,8 +8,8 @@ import (
 	"net/http"
 )
 
-// GetManyUsers godoc
-// @Summary Get many users
+// GetUsersList godoc
+// @Summary Get list of users
 // @Description get many users based on pagination and sorting parameters
 // @Tags Users
 // @Accept json
@@ -23,7 +23,7 @@ import (
 // @Failure 422 {object} schemas.ErrorResponse "Unprocessable entity"
 // @Failure 500 {object} schemas.ErrorResponse "Internal server error"
 // @Router /api/users [get]
-func GetManyUsers(w http.ResponseWriter, r *http.Request) {
+func GetUsersList(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to fetch many users.")
 	params, err := handlers_utils.ExtractListParams(r)
 	if err != nil {
@@ -31,8 +31,8 @@ func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Call GetManyUsers from the repo
-	users, err := user_repo.GetManyUsers(*params)
+	// Call GetList from the repo
+	users, err := user_repo.GetList(*params)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return

@@ -50,7 +50,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 func extractAndValidateTokens(r *http.Request) (existingSessionToken string, userId int, err error) {
 	log.Println("extractAndValidateTokens: validating tokens")
 	// Extract the refresh token from the request cookies
-	existingAccessToken, err := handlers_utils.ExtractJWT(r)
+	existingAccessToken, err := handlers_utils.ExtractJWTFromHeader(r)
 	if err != nil {
 		return "", 0, err
 	}
@@ -70,6 +70,8 @@ func extractAndValidateTokens(r *http.Request) (existingSessionToken string, use
 	return sessionToken, userId, nil
 }
 
+// updateUserSessionAndGenerateTokens updates a user's session, generates a new access token and refresh cookies.
+// It takes as input an http.Request, the session token and user ID, and returns a pointer to a TokenResponse, a pointer to an http.Cookie, or an error.
 func updateUserSessionAndGenerateTokens(r *http.Request, sessionToken string, userId int) (*schemas.TokenResponse, *http.Cookie, error) {
 	// expiresAt declaration for session and for new refresh token
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))

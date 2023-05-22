@@ -22,21 +22,7 @@ func GetUser(filters *map[string]interface{}) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	user := models.User{
-		ID:         uint(result["id"].(int32)),
-		ScreenName: result["screen_name"].(string),
-		Email:      result["email"].(string),
-		Password:   result["password"].(string),
-	}
-	if result["company_id"] != nil {
-		companyId := result["company_id"].(int)
-		user.CompanyId = &companyId
-	}
-
-	if result["rank"] != nil {
-		rank := result["rank"].(int)
-		user.Rank = &rank
-	}
+	user := UserFromResult(&result)
 	return &user, nil
 }
 

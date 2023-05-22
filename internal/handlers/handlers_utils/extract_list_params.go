@@ -10,6 +10,23 @@ import (
 )
 
 func ExtractListParams(r *http.Request) (*schemas.ListParams, error) {
+	// Parse params
+	params, err := parseQueryParams(r)
+	if err != nil {
+		return nil, err
+	}
+	// Validate parsed params
+	err = (*params).Validate()
+	if err != nil {
+		return nil, &exceptions.ErrInvalidEntity{
+			Message: fmt.Sprintf("could not prepare validate params: %v", err),
+		}
+	}
+
+	return params, nil
+}
+
+func parseQueryParams(r *http.Request) (*schemas.ListParams, error) {
 	limitStr := r.URL.Query().Get("limit")
 	offsetStr := r.URL.Query().Get("offset")
 	sortStr := r.URL.Query().Get("sort")
@@ -48,15 +65,6 @@ func ExtractListParams(r *http.Request) (*schemas.ListParams, error) {
 		params.SortingField = fieldName
 		params.SortingDirection = ordering
 	}
-
-	// Validate params
-	err := params.Validate()
-	if err != nil {
-		return nil, &exceptions.ErrInvalidEntity{
-			Message: fmt.Sprintf("could not prepare validate params: %v", err),
-		}
-	}
-
 	return &params, nil
 }
 
@@ -74,10 +82,10 @@ func parseSorting(sorting *string) (*string, *string, error) {
 	ordering := strings.TrimRight(parts[1], "]")
 	errorMsg := ""
 	if fieldName == "" || ordering == "" {
-		errorMsg = "could not validate sorting: fieldname and ordering can not be empty."
+		errorMsg = "could not parse sorting: fieldname or ordering can not be empty."
 	}
 	if ordering != "ASC" && ordering != "DESC" {
-		errorMsg = "could not validate sorting ordering: ordering must be 'ASC' or 'DESC'."
+		errorMsg = "could not parse sorting: ordering must be 'ASC' or 'DESC'."
 	}
 	if errorMsg != "" {
 		return nil, nil, &exceptions.ErrInvalidEntity{Message: errorMsg}

@@ -48,8 +48,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// updateSessionAndCookies invalidates a user session and resets the refresh token.
+// It takes as input the session token string, and returns a pointer to an http.Cookie or an error.
 func updateSessionAndCookies(sessionToken string) (*http.Cookie, error) {
-	// update deleted_at for session, if error = session filters are invalid
+	// Perform the session update operation. if error = session filters are invalid
 	_, err := sessions_repo.UpdateSessions(
 		&map[string]interface{}{
 			"token":      sessionToken,
@@ -63,7 +65,7 @@ func updateSessionAndCookies(sessionToken string) (*http.Cookie, error) {
 		return nil, err
 	}
 
-	// new cookies creation:
+	// Create a new cookie
 	cookies := http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
@@ -76,15 +78,20 @@ func updateSessionAndCookies(sessionToken string) (*http.Cookie, error) {
 	return &cookies, nil
 }
 
+// extractUidAndSessionToken extracts the user ID and session token from the request.
+// It takes as input an http.Request, and returns the user ID, session token, or an error.
 func extractUidAndSessionToken(r *http.Request) (int, string, error) {
-	accessClaims, refreshClaims, err := handlers_utils.ValidateAccessToken(r)
+	// Validate access token from request header
+	accessClaims, refreshClaims, err := handlers_utils.ValidateAccessTokenHeader(r)
 	if err != nil {
 		return 0, "", err
 	}
+	// Convert user ID from string to integer
 	userId, err := strconv.Atoi((*accessClaims)["Id"].(string))
 	if err != nil {
 		return 0, "", err
 	}
+	// Extract session token from refresh claims
 	sessionToken := (*refreshClaims)["SessionToken"].(string)
 	return userId, sessionToken, nil
 }
