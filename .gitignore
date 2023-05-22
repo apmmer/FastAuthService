@@ -26,3 +26,4 @@ trash/
 # Other dev files
 .env
 info.dev
+calculator.*
