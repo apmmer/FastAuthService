@@ -1,4 +1,4 @@
-package user_repo
+package users_repo
 
 import (
 	"AuthService/configs"

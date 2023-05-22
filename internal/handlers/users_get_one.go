@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"AuthService/internal/handlers/handlers_utils"
-	"AuthService/internal/repositories/user_repo"
+	"AuthService/internal/repositories/users_repo"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,12 +30,12 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	_, userID := path.Split(r.URL.Path)
 	filters["id"] = userID
 
-	user, err := user_repo.GetUser(&filters)
+	user, err := users_repo.GetUser(&filters)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
 	}
-	log.Println("Successfully got result from user_repo.GetUser")
+	log.Println("Successfully got result from users_repo.GetUser")
 
 	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")

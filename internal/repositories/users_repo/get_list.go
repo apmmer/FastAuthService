@@ -1,17 +1,17 @@
-package user_repo
+package users_repo
 
 import (
 	"AuthService/configs"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
-	"AuthService/internal/repositories/user_repo/users_repo_utils"
+	"AuthService/internal/repositories/users_repo/users_repo_utils"
 	"AuthService/internal/schemas"
 	"fmt"
 )
 
 func GetList(params schemas.ListParams) (*[]models.User, error) {
-	fmt.Println("Called user_repo.GetManyUsers")
+	fmt.Println("Called users_repo.GetManyUsers")
 
 	// ensure SortingField in models field
 	if params.SortingField != nil {

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"AuthService/internal/handlers/handlers_utils"
-	"AuthService/internal/repositories/user_repo"
+	"AuthService/internal/repositories/users_repo"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,7 +32,7 @@ func GetUsersList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Call GetList from the repo
-	users, err := user_repo.GetList(*params)
+	users, err := users_repo.GetList(*params)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return

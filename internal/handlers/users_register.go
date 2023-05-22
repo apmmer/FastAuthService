@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"AuthService/internal/handlers/handlers_utils"
-	"AuthService/internal/repositories/user_repo"
+	"AuthService/internal/repositories/users_repo"
 	"AuthService/internal/schemas"
 	"encoding/json"
 	"log"
@@ -43,9 +43,9 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Saving the user in the database & prepare user response
-	userRes, err := user_repo.CreateUser(userReq)
+	userRes, err := users_repo.CreateUser(userReq)
 	if err != nil {
-		log.Println("Faced an error in user_repo.CreateUser")
+		log.Println("Faced an error in users_repo.CreateUser")
 		handlers_utils.HandleException(w, err)
 		return
 	}

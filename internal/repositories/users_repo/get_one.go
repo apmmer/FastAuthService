@@ -1,4 +1,4 @@
-package user_repo
+package users_repo
 
 import (
 	"AuthService/configs"
@@ -6,7 +6,7 @@ import (
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
-	"AuthService/internal/repositories/user_repo/users_repo_utils"
+	"AuthService/internal/repositories/users_repo/users_repo_utils"
 	"fmt"
 )
 

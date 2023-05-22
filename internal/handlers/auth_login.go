@@ -6,7 +6,7 @@ import (
 	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
-	"AuthService/internal/repositories/user_repo"
+	"AuthService/internal/repositories/users_repo"
 	"AuthService/internal/schemas"
 	"encoding/json"
 	"fmt"
@@ -64,7 +64,7 @@ func processUser(r *http.Request) (int, error) {
 	filters := make(map[string]interface{})
 	filters["email"] = input.Email
 	filters["deleted_at"] = nil
-	user, err := user_repo.GetUser(&filters)
+	user, err := users_repo.GetUser(&filters)
 	if err != nil {
 		return 0, err
 	}
