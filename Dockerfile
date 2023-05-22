@@ -18,7 +18,7 @@ FROM alpine:latest
 WORKDIR /app
 # Copy the executable file from the previous image
 COPY --from=builder /app/auth_service /app/
-
+COPY --from=builder /app/certificates/ /app/certificates/
 # Add CA certificates for proper HTTPS functionality
 RUN apk --no-cache add ca-certificates
 

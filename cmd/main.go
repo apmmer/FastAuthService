@@ -14,7 +14,7 @@ import (
 
 // @host localhost:8080
 // @BasePath /
-// @schemes http
+// @schemes https
 
 // @securityDefinitions.apikey JWTAuth
 // @in header
@@ -26,12 +26,17 @@ import (
 
 // @security JWTAuth
 // @security ApiKeyAuth
-
 func main() {
-
 	database.InitDB(configs.MainSettings.UsersDBURL)
 	router := routers.GetRouter()
 
-	log.Println("AuthService is running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Println("AuthService is running on :8080 with HTTPS")
+	log.Fatal(
+		http.ListenAndServeTLS(
+			":8080",
+			configs.MainSettings.СertFileLocation,
+			configs.MainSettings.CertKeyLocation,
+			router,
+		),
+	)
 }

@@ -583,7 +583,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "v.1.0.0",
 	Host:             "localhost:8080",
 	BasePath:         "/",
-	Schemes:          []string{"http"},
+	Schemes:          []string{"https"},
 	Title:            "Auth Service API",
 	Description:      "API server for auth stuff",
 	InfoInstanceName: "swagger",

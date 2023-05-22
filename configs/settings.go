@@ -26,6 +26,8 @@ type MainSettingsScheme struct {
 	RefreshTokenLifeMinutes int
 	SecureCookies           bool
 	HttpOnlyCookies         bool
+	CertKeyLocation         string
+	СertFileLocation        string
 }
 
 func GetSettings() *MainSettingsScheme {
@@ -46,10 +48,18 @@ func GetSettings() *MainSettingsScheme {
 			"JWT_REFRESH_SECRET",
 			"refresh",
 		),
-		// 16, 24 or 32 bytes!
+		// SessionSecret MUST CONTAIN 16, 24 or 32 bytes!
 		SessionSecret: GetEnv(
 			"SESSION_SECRET",
 			"sesssesssesssess",
+		),
+		CertKeyLocation: GetEnv(
+			"CERTIFICATE_KEY_LOC",
+			"/app/certificates/dev_private_key.pem",
+		),
+		СertFileLocation: GetEnv(
+			"CERTIFICATE_FILE_LOC",
+			"/app/certificates/dev_certificate.pem",
 		),
 		ProjectPath:             "/app",
 		UsersTableName:          "users",
