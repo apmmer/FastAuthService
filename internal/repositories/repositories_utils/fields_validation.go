@@ -23,19 +23,27 @@ func GetModelFields(model interface{}) []string {
 
 // Validate if filters fieldnames are correct for provided model
 func ValidateMapFields(filters *map[string]interface{}, model interface{}) error {
-	model_fields := GetModelFields(model)
+	modelFields := GetModelFields(model)
 	for key := range *filters {
-		field_found := false
-		for _, fieldname := range model_fields {
-			if key == fieldname {
-				field_found = true
-				break
-			}
+		err := FieldInModelFields(key, modelFields)
+		if err != nil {
+			return err
 		}
-		if !field_found {
-			return &exceptions.ErrInvalidEntity{
-				Message: fmt.Sprintf("field %s was not found in model", key),
-			}
+	}
+	return nil
+}
+
+func FieldInModelFields(attribute string, modelFields []string) error {
+	fieldFound := false
+	for _, modelField := range modelFields {
+		if attribute == modelField {
+			fieldFound = true
+			break
+		}
+	}
+	if !fieldFound {
+		return &exceptions.ErrInvalidEntity{
+			Message: fmt.Sprintf("attribute %s was not found in model", attribute),
 		}
 	}
 	return nil

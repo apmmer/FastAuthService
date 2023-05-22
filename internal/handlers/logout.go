@@ -27,22 +27,32 @@ import (
 func Logout(w http.ResponseWriter, r *http.Request) {
 	// AccessToken validation
 	log.Println("Logout: validating access token")
-	accessClaims, refreshClaims, err := handlers_utils.ValidateAccessToken(r)
+	userId, sessionToken, err := extractUidAndSessionToken(r)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
 	}
-	userId, err := strconv.Atoi((*accessClaims)["Id"].(string))
-	log.Printf("Got userId = %d", userId)
+	// here we will perform user session and cookies updation
+	cookies, err := updateSessionAndCookies(sessionToken)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		handlers_utils.ErrorResponse(w, "Session is closed, expired or does not exist.", http.StatusUnauthorized)
 		return
 	}
-	refreshToken := (*refreshClaims)["SessionToken"].(string)
-	// here we will perform user session update, but next time
-	_, err = sessions_repo.UpdateSessions(
+	http.SetCookie(w, cookies)
+
+	// prepare response
+	responseMsg := fmt.Sprintf("Successfully logged out user with ID #%d", userId)
+	err = handlers_utils.HandleJsonResponse(w, responseMsg)
+	if err != nil {
+		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+	}
+}
+
+func updateSessionAndCookies(sessionToken string) (*http.Cookie, error) {
+	// update deleted_at for session, if error = session filters are invalid
+	_, err := sessions_repo.UpdateSessions(
 		&map[string]interface{}{
-			"token":      refreshToken,
+			"token":      sessionToken,
 			"deleted_at": nil,
 		},
 		&map[string]interface{}{
@@ -50,11 +60,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		},
 	)
 	if err != nil {
-		handlers_utils.ErrorResponse(w, "Session is closed, expired or not exists.", http.StatusUnauthorized)
-		return
+		return nil, err
 	}
 
-	// here we delete cookies:
+	// new cookies creation:
 	cookies := http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
@@ -64,12 +73,18 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 		Secure:   configs.MainSettings.SecureCookies,
 		SameSite: http.SameSiteStrictMode,
 	}
-	http.SetCookie(w, &cookies)
+	return &cookies, nil
+}
 
-	// prepare response
-	responseMsg := fmt.Sprintf("Successfully logged out user with ID #%d", userId)
-	err = handlers_utils.HandleJsonResponse(w, responseMsg)
+func extractUidAndSessionToken(r *http.Request) (int, string, error) {
+	accessClaims, refreshClaims, err := handlers_utils.ValidateAccessToken(r)
 	if err != nil {
-		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		return 0, "", err
 	}
+	userId, err := strconv.Atoi((*accessClaims)["Id"].(string))
+	if err != nil {
+		return 0, "", err
+	}
+	sessionToken := (*refreshClaims)["SessionToken"].(string)
+	return userId, sessionToken, nil
 }

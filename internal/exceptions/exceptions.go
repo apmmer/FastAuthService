@@ -53,3 +53,12 @@ type ErrUnauthorized struct {
 func (e *ErrUnauthorized) Error() string {
 	return e.Message
 }
+
+// Auth data is invalid
+type ErrInputError struct {
+	Message string
+}
+
+func (e *ErrInputError) Error() string {
+	return e.Message
+}

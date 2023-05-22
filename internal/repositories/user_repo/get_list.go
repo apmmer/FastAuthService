@@ -13,16 +13,25 @@ func GetManyUsers(params schemas.ListParams) ([]models.User, error) {
 	fmt.Println("Called GetManyUsers")
 	var users []models.User
 
-	// Use the ParseSorting function to extract the sorting field and direction
-	sortingField, sortingDirection := repositories_utils.ParseSorting(params.Sorting)
+	// ensure SortingField in models field
+	if params.SortingField != nil {
+		sortingField := *params.SortingField
+		err := repositories_utils.FieldInModelFields(
+			sortingField,
+			repositories_utils.GetModelFields(models.User{}),
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	// Call the base_repo.GetMany function
 	results, err := base_repo.GetMany(
 		configs.MainSettings.UsersTableName,
 		params.Limit,
 		params.Offset,
-		sortingField,
-		sortingDirection,
+		params.SortingField,
+		params.SortingDirection,
 		nil,
 	)
 	if err != nil {

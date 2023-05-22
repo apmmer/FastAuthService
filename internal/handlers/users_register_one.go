@@ -35,7 +35,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Decoded to CreateUserRequest")
 
-	// Validation
+	// Request ralidation
 	err = userReq.Validate()
 	if err != nil {
 		handlers_utils.ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)

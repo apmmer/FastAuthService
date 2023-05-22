@@ -39,11 +39,6 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.SetCookie(w, cookies)
-	if err != nil {
-		handlers_utils.HandleException(w, err)
-		return
-	}
-
 	// Return the new access token
 	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
@@ -51,6 +46,7 @@ func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Extracts tokens, validates and returns necessary objects for new tokens creation
 func extractAndValidateTokens(r *http.Request) (existingSessionToken string, userId int, err error) {
 	log.Println("extractAndValidateTokens: validating tokens")
 	// Extract the refresh token from the request cookies
@@ -105,5 +101,5 @@ func updateUserSessionAndGenerateTokens(r *http.Request, sessionToken string, us
 	if err != nil {
 		return nil, nil, err
 	}
-	return accessToken, &cookies, nil
+	return accessToken, cookies, nil
 }

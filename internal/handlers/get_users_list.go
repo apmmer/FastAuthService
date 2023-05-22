@@ -3,7 +3,6 @@ package handlers
 import (
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/user_repo"
-	"AuthService/internal/schemas"
 	"fmt"
 	"log"
 	"net/http"
@@ -26,20 +25,12 @@ import (
 // @Router /api/users [get]
 func GetManyUsers(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to fetch many users.")
-
-	limitStr := r.URL.Query().Get("limit")
-	offsetStr := r.URL.Query().Get("offset")
-	sortStr := r.URL.Query().Get("sort")
-
-	params, err := schemas.GetValidatedListParams(
-		limitStr, offsetStr, sortStr,
-	)
+	params, err := handlers_utils.ExtractListParams(r)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
 	}
 
-	log.Printf("Ready to call user_repo, params = %v.", *params)
 	// Call GetManyUsers from the repo
 	users, err := user_repo.GetManyUsers(*params)
 	if err != nil {

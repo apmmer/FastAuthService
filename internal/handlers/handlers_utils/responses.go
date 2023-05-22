@@ -36,6 +36,9 @@ func HandleException(w http.ResponseWriter, err error) {
 	case *exceptions.ErrUnauthorized:
 		log.Println("HandleException: ErrUnauthorized...")
 		ErrorResponse(w, err.Error(), http.StatusUnauthorized)
+	case *exceptions.ErrInputError:
+		log.Println("HandleException: ErrInputError...")
+		ErrorResponse(w, err.Error(), http.StatusBadRequest)
 	default:
 		log.Println("HandleException: default Exception...")
 		ErrorResponse(w, "Server can not process your request", http.StatusInternalServerError)

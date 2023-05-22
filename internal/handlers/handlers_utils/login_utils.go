@@ -62,7 +62,7 @@ func GenerateAccessToken(userId int, deviceInfo *schemas.DeviceInfo) (*schemas.T
 }
 
 // GenerateRefreshToken generates a new JWT refresh token for a given user
-func GenerateRefreshCookies(userId int, accessToken string, sessionToken string, expiresAt *time.Time) (http.Cookie, error) {
+func GenerateRefreshCookies(userId int, accessToken string, sessionToken string, expiresAt *time.Time) (*http.Cookie, error) {
 	// Note: claims include generated access token
 	claims := map[string]interface{}{
 		"Id":           strconv.Itoa(userId),
@@ -73,7 +73,7 @@ func GenerateRefreshCookies(userId int, accessToken string, sessionToken string,
 	}
 	tokenString, err := GenerateJWT(&claims, configs.MainSettings.JwtRefreshSecret)
 	if err != nil {
-		return http.Cookie{}, err
+		return nil, err
 	}
 
 	// Create and return the refresh token cookie
@@ -87,7 +87,7 @@ func GenerateRefreshCookies(userId int, accessToken string, sessionToken string,
 		Secure:   configs.MainSettings.SecureCookies,
 		SameSite: http.SameSiteStrictMode,
 	}
-	return cookie, nil
+	return &cookie, nil
 }
 
 // ParseToken parses a JWT token and returns the claims.
