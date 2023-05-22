@@ -1,10 +1,8 @@
 package base_repo
 
 import (
-	"AuthService/database"
 	"AuthService/internal/general_utils"
 	"AuthService/internal/repositories/base_repo/base_repo_utils"
-	"context"
 	"fmt"
 	"strings"
 )
@@ -35,15 +33,9 @@ func Update(tableName string, filters *map[string]interface{}, updateData *map[s
 	if err != nil {
 		return nil, general_utils.UpdateExceptionMsg("could not parse sql returningFields", err)
 	}
-	// getting pgx.Rows
-	rows, err := database.Pool.Query(context.Background(), sql, args...)
+	results, err := ExecuteRowParseList(sql, args)
 	if err != nil {
-		return nil, fmt.Errorf("could not get records from %s table: %v", tableName, err)
-	}
-	// parse results to []map[string]interface{}
-	results, err := base_repo_utils.ParseSQLResults(&rows)
-	if err != nil {
-		return nil, fmt.Errorf("could not parse SQL results from %s table: %v", tableName, err)
+		return nil, err
 	}
 	return results, nil
 }

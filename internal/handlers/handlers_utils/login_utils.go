@@ -3,7 +3,6 @@ package handlers_utils
 import (
 	"AuthService/configs"
 	"AuthService/internal/exceptions"
-	"AuthService/internal/models"
 	"AuthService/internal/schemas"
 	"errors"
 	"fmt"
@@ -39,10 +38,10 @@ func GenerateJWT(data *map[string]interface{}, secret string) (string, error) {
 // GenerateAccessToken creates a new Access JWT for the provided user.
 // The token includes the user's ID and an expiration timestamp, and it is signed with a secret key.
 // The function returns a TokenResponse struct, which includes the JWT itself and its expiration timestamp.
-func GenerateAccessToken(user *models.User, deviceInfo *schemas.DeviceInfo) (*schemas.TokenResponse, error) {
+func GenerateAccessToken(userId int, deviceInfo *schemas.DeviceInfo) (*schemas.TokenResponse, error) {
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.TokenLifeMinutes)).Unix()
 	claims := map[string]interface{}{
-		"Id":        strconv.Itoa(int(user.ID)),
+		"Id":        strconv.Itoa(userId),
 		"ExpiresAt": expiresAt,
 		"Issuer":    configs.MainSettings.ServiceName,
 		"IPAddress": deviceInfo.IPAddress,
@@ -63,10 +62,10 @@ func GenerateAccessToken(user *models.User, deviceInfo *schemas.DeviceInfo) (*sc
 }
 
 // GenerateRefreshToken generates a new JWT refresh token for a given user
-func GenerateRefreshCookies(user *models.User, accessToken string, sessionToken string, expiresAt *time.Time) (http.Cookie, error) {
+func GenerateRefreshCookies(userId int, accessToken string, sessionToken string, expiresAt *time.Time) (http.Cookie, error) {
 	// Note: claims include generated access token
 	claims := map[string]interface{}{
-		"Id":           strconv.Itoa(int(user.ID)),
+		"Id":           strconv.Itoa(userId),
 		"ExpiresAt":    expiresAt.Unix(),
 		"Issuer":       configs.MainSettings.ServiceName,
 		"AccessToken":  accessToken,
@@ -118,6 +117,7 @@ func ParseToken(tokenString string, secret string) (jwt.MapClaims, error) {
 	}
 }
 
+// Extracts JWT from request Authorization header
 func ExtractJWT(r *http.Request) (string, error) {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {

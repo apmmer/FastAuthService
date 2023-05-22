@@ -8,6 +8,7 @@ import (
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
 	"fmt"
+	"log"
 	"time"
 )
 
@@ -34,9 +35,46 @@ func UpdateSessions(filters *map[string]interface{}, updateData *map[string]inte
 	}
 	if len(*results) == 0 {
 		fmt.Println("sessions not found")
-		return nil, &exceptions.ErrNotFound{Message: "sessions not found"}
+		return nil, &exceptions.ErrNotFound{Message: "valid sessions not found"}
 	}
 
+	updatedItems := parseListToListOfSessions(results)
+	return &updatedItems, nil
+}
+
+// Performs single request to update user_sessions and check related user by the way
+func OptimizedUpdateWithUserChecking(expires_at *time.Time, token string) (*[]models.UserSession, error) {
+	sqlQuery := `
+		UPDATE user_sessions
+			SET expires_at = $1
+			WHERE
+				token = $2
+				AND deleted_at IS NULL
+				AND expires_at > NOW()
+				AND user_id IN (
+					SELECT id FROM users WHERE deleted_at IS NULL
+				)
+		RETURNING *;
+	`
+	args := []interface{}{
+		*expires_at,
+		token,
+	}
+	results, err := base_repo.ExecuteRowParseList(sqlQuery, args)
+	if err != nil {
+		log.Println("failed to update sessions")
+		return nil, general_utils.UpdateExceptionMsg("failed to update sessions", err)
+	}
+	if len(*results) == 0 {
+		log.Println("sessions not found")
+		return nil, &exceptions.ErrNotFound{Message: "sessions not found"}
+	}
+	updatedItems := parseListToListOfSessions(results)
+	return &updatedItems, nil
+}
+
+// converts a list of base_repo results to a list of UserSession.
+func parseListToListOfSessions(results *[]map[string]interface{}) []models.UserSession {
 	var updatedItems []models.UserSession
 	for _, result := range *results {
 		updatedItem := models.UserSession{
@@ -53,6 +91,5 @@ func UpdateSessions(filters *map[string]interface{}, updateData *map[string]inte
 		}
 		updatedItems = append(updatedItems, updatedItem)
 	}
-
-	return &updatedItems, nil
+	return updatedItems
 }

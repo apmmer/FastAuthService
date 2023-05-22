@@ -59,7 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
 
 	// Генерируем токен доступа
-	accessToken, err := handlers_utils.GenerateAccessToken(user, &deviceInfo)
+	accessToken, err := handlers_utils.GenerateAccessToken(int((*user).ID), &deviceInfo)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
@@ -68,13 +68,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	sessionToken, err := handlers_utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
 	// generate the expiration date for both session and refreshToken
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
-	sess, err := sessions_repo.CreateSession(user.ID, sessionToken, &expiresAt)
+	sess, err := sessions_repo.CreateSession((*user).ID, sessionToken, &expiresAt)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
 	}
 	// Set Refresh cookies
-	cookies, err := handlers_utils.GenerateRefreshCookies(user, accessToken.AccessToken, sessionToken, &sess.ExpiresAt)
+	cookies, err := handlers_utils.GenerateRefreshCookies(int((*user).ID), accessToken.AccessToken, sessionToken, &sess.ExpiresAt)
 	if err != nil {
 		handlers_utils.HandleException(w, err)
 		return
