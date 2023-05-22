@@ -1,6 +1,8 @@
 package main
 
 import (
+	"AuthService/configs"
+	"AuthService/database"
 	"AuthService/internal/routers"
 	"log"
 	"net/http"
@@ -12,14 +14,22 @@ import (
 
 // @host localhost:8080
 // @BasePath /
+// @schemes http
 
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey JWTAuth
 // @in header
 // @name Authorization
 
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name X-Api-Key
+
+// @security JWTAuth
+// @security ApiKeyAuth
+
 func main() {
 
-	// database.InitDB(configs.MainSettings.UsersDBURL)
+	database.InitDB(configs.MainSettings.UsersDBURL)
 	router := routers.GetRouter()
 
 	log.Println("AuthService is running on :8080")
