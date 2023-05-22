@@ -221,7 +221,7 @@
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get many users",
+                "summary": "Get list of users",
                 "parameters": [
                     {
                         "type": "integer",
@@ -454,13 +454,13 @@
         "models.User": {
             "type": "object",
             "properties": {
-                "companyId": {
+                "company_id": {
                     "type": "integer"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
-                "deletedAt": {
+                "deleted_at": {
                     "type": "string"
                 },
                 "email": {
@@ -475,10 +475,10 @@
                 "rank": {
                     "type": "integer"
                 },
-                "screenName": {
+                "screen_name": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }

@@ -225,7 +225,7 @@ const docTemplate = `{
                 "tags": [
                     "Users"
                 ],
-                "summary": "Get many users",
+                "summary": "Get list of users",
                 "parameters": [
                     {
                         "type": "integer",
@@ -458,13 +458,13 @@ const docTemplate = `{
         "models.User": {
             "type": "object",
             "properties": {
-                "companyId": {
+                "company_id": {
                     "type": "integer"
                 },
-                "createdAt": {
+                "created_at": {
                     "type": "string"
                 },
-                "deletedAt": {
+                "deleted_at": {
                     "type": "string"
                 },
                 "email": {
@@ -479,10 +479,10 @@ const docTemplate = `{
                 "rank": {
                     "type": "integer"
                 },
-                "screenName": {
+                "screen_name": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "string"
                 }
             }

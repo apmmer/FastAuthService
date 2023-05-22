@@ -9,6 +9,7 @@ import (
 	"reflect"
 )
 
+// Sets a body for error response with provided message and status code
 func ErrorResponse(w http.ResponseWriter, message string, httpStatusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(httpStatusCode)
@@ -16,6 +17,7 @@ func ErrorResponse(w http.ResponseWriter, message string, httpStatusCode int) {
 	json.NewEncoder(w).Encode(errMsg)
 }
 
+// HandleException transforms exception to https response with valid status code.
 func HandleException(w http.ResponseWriter, err error) {
 	switch err.(type) {
 	case *exceptions.ErrNotFound:
@@ -45,6 +47,7 @@ func HandleException(w http.ResponseWriter, err error) {
 	}
 }
 
+// HandleJsonResponse converts object to a json server response
 func HandleJsonResponse(w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 

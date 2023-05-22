@@ -6,6 +6,7 @@ import (
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
+	"AuthService/internal/repositories/user_repo/users_repo_utils"
 	"fmt"
 )
 
@@ -22,7 +23,7 @@ func GetUser(filters *map[string]interface{}) (*models.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	user := UserFromResult(&result)
+	user := users_repo_utils.UserFromResult(&result)
 	return &user, nil
 }
 

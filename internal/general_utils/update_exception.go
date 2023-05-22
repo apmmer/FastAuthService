@@ -6,6 +6,7 @@ import (
 	"log"
 )
 
+// Updates exception message with provided prefix and returns the same type of exception.
 func UpdateExceptionMsg(msg string, err error) error {
 	switch err.(type) {
 	case *exceptions.ErrNotFound:

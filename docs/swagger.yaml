@@ -2,11 +2,11 @@ basePath: /
 definitions:
   models.User:
     properties:
-      companyId:
+      company_id:
         type: integer
-      createdAt:
+      created_at:
         type: string
-      deletedAt:
+      deleted_at:
         type: string
       email:
         type: string
@@ -16,9 +16,9 @@ definitions:
         type: string
       rank:
         type: integer
-      screenName:
+      screen_name:
         type: string
-      updatedAt:
+      updated_at:
         type: string
     type: object
   schemas.CreateUserRequest:
@@ -267,7 +267,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
-      summary: Get many users
+      summary: Get list of users
       tags:
       - Users
     post:

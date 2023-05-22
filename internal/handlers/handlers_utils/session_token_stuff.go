@@ -20,7 +20,7 @@ func GenerateSessionToken(deviceInfo *schemas.DeviceInfo, secretKey string) (str
 	if err != nil {
 		return "", err
 	}
-	// wrap generatedCipher to authenticate (protect) the data
+	// wrap generatedCipher with 'GCM' to authenticate (protect) the data
 	gcm, err := cipher.NewGCM(generatedCipher)
 	if err != nil {
 		return "", err

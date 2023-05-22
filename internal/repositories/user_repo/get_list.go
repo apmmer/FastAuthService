@@ -5,6 +5,7 @@ import (
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
+	"AuthService/internal/repositories/user_repo/users_repo_utils"
 	"AuthService/internal/schemas"
 	"fmt"
 )
@@ -38,6 +39,6 @@ func GetList(params schemas.ListParams) (*[]models.User, error) {
 	}
 
 	// Convert each map result to a User
-	users := ParseListToListOfUsers(&results)
+	users := users_repo_utils.ParseListToListOfUsers(&results)
 	return users, nil
 }
