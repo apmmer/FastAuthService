@@ -44,3 +44,12 @@ func HandleException(w http.ResponseWriter, err error) {
 		ErrorResponse(w, "Server can not process your request", http.StatusInternalServerError)
 	}
 }
+
+func HandleExceptionNew(w http.ResponseWriter, err error) {
+	if customErr, ok := err.(*exceptions.DefaultError); ok {
+		log.Println("HandleException: ErrNotFound...")
+		ErrorResponse(w, customErr.Error(), customErr.StatusCode)
+	} else {
+		ErrorResponse(w, "Server can not process your request: unhandled error.", http.StatusInternalServerError)
+	}
+}
