@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"fmt"
 	"log"
@@ -25,18 +26,18 @@ func ValidateAccess(w http.ResponseWriter, r *http.Request) {
 	log.Println("ValidateAccess: validating access token")
 	accessClaims, _, err := handlers_utils.ValidateAccessTokenHeader(r)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	userId, err := strconv.Atoi((*accessClaims)["Id"].(string))
 	log.Printf("Got userId = %d", userId)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	responseMsg := fmt.Sprintf("Authorization data is valid for user with ID #%d", userId)
 	err = handlers_utils.HandleJsonResponse(w, responseMsg)
 	if err != nil {
-		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

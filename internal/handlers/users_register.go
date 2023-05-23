@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/users_repo"
 	"AuthService/internal/schemas"
@@ -16,6 +17,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param user body schemas.CreateUserRequest true "Create user"
+// @security ApiKeyAuth
 // @Success 201 {object} models.User "User registered successfully"
 // @Failure 400 {object} schemas.ErrorResponse "Bad request"
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
@@ -30,7 +32,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Decoding the request body into the CreateUserRequest structure
 	err := json.NewDecoder(r.Body).Decode(&userReq)
 	if err != nil {
-		handlers_utils.ErrorResponse(w, err.Error(), http.StatusBadRequest)
+		general_utils.ErrorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	log.Println("Decoded to CreateUserRequest")
@@ -38,7 +40,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Request ralidation
 	err = userReq.Validate()
 	if err != nil {
-		handlers_utils.ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
+		general_utils.ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -46,7 +48,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	userRes, err := users_repo.CreateUser(userReq)
 	if err != nil {
 		log.Println("Faced an error in users_repo.CreateUser")
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	// Setting the status 201

@@ -13,6 +13,7 @@ import (
 // @Tags Health
 // @Accept  json
 // @Produce  json
+// @security ApiKeyAuth
 // @Success 200 {object} schemas.HealthCheckResponse
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
 // @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/users_repo"
 	"fmt"
@@ -14,6 +15,7 @@ import (
 // @Tags Users
 // @Produce  json
 // @Param id path int true "User ID"
+// @security ApiKeyAuth
 // @Success 200 {object} models.User
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
 // @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
@@ -32,7 +34,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 	user, err := users_repo.GetUser(&filters)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	log.Println("Successfully got result from users_repo.GetUser")
@@ -42,6 +44,6 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 	err = handlers_utils.HandleJsonResponse(w, user)
 	if err != nil {
-		handlers_utils.ErrorResponse(w, fmt.Sprintf("Error while handling JSON response: %v", err), http.StatusInternalServerError)
+		general_utils.ErrorResponse(w, fmt.Sprintf("Error while handling JSON response: %v", err), http.StatusInternalServerError)
 	}
 }

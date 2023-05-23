@@ -22,6 +22,7 @@ import (
 // @Accept  json
 // @Produce  json
 // @Param InputBody body schemas.LoginInput true "The email and password of the user"
+// @security ApiKeyAuth
 // @Success 200 {object} schemas.TokenResponse "Returns a struct with the JWT and its expiration timestamp"
 // @Failure 400 {object} schemas.ErrorResponse "Returns an error message if the request body cannot be parsed"
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
@@ -33,13 +34,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	userId, err := processUser(r)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 
 	accessToken, cookies, err := generateUserSessionAndTokens(r, userId)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	// Set refresh token in cookies
@@ -48,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Create response with token
 	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 
@@ -83,20 +84,21 @@ func generateUserSessionAndTokens(r *http.Request, userId int) (*schemas.TokenRe
 	deviceInfo := handlers_utils.GetDeviceInfo(r)
 	log.Printf("deviceInfo \n	IP: %s\n	UserAgent: %s", deviceInfo.IPAddress, deviceInfo.UserAgent)
 
-	// Генерируем токен доступа
+	// Generate access token
 	accessToken, err := handlers_utils.GenerateAccessToken(userId, &deviceInfo)
 	if err != nil {
 		return nil, nil, err
 	}
-
+	// Generate a session token for new session
 	sessionToken, err := handlers_utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
 	// generate the expiration date for both session and refreshToken
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
+	// create session
 	_, err = sessions_repo.CreateSession(uint(userId), sessionToken, &expiresAt)
 	if err != nil {
 		return nil, nil, err
 	}
-	// Set Refresh cookies
+	// Get refresh token cookies
 	cookies, err := handlers_utils.GenerateRefreshCookies(userId, accessToken.AccessToken, sessionToken, &expiresAt)
 	if err != nil {
 		return nil, nil, err

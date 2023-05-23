@@ -19,6 +19,7 @@ type MainSettingsScheme struct {
 	UsersTableName          string
 	SessionsTableName       string
 	Debug                   string
+	ApiKey                  string
 	JwtSecret               string
 	JwtRefreshSecret        string
 	SessionSecret           string
@@ -28,6 +29,7 @@ type MainSettingsScheme struct {
 	HttpOnlyCookies         bool
 	CertKeyLocation         string
 	СertFileLocation        string
+	SwaggerUrl              string
 }
 
 func GetSettings() *MainSettingsScheme {
@@ -39,6 +41,10 @@ func GetSettings() *MainSettingsScheme {
 		Debug: GetEnv(
 			"DEBUG",
 			"true",
+		),
+		ApiKey: GetEnv(
+			"API_KEY",
+			"secret",
 		),
 		JwtSecret: GetEnv(
 			"JWT_SECRET",
@@ -69,6 +75,7 @@ func GetSettings() *MainSettingsScheme {
 		ServiceName:             "AuthService",
 		HttpOnlyCookies:         true,
 		SecureCookies:           false,
+		SwaggerUrl:              "/swagger",
 	}
 }
 

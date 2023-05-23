@@ -3,6 +3,7 @@ package handlers
 import (
 	"AuthService/configs"
 	"AuthService/internal/exceptions"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"AuthService/internal/schemas"
@@ -29,20 +30,20 @@ import (
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	existingSessionToken, userId, err := extractAndValidateTokens(r)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 
 	accessToken, cookies, err := updateUserSessionAndGenerateTokens(r, existingSessionToken, userId)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	http.SetCookie(w, cookies)
 	// Return the new access token
 	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 

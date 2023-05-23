@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AuthService/configs"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"fmt"
@@ -22,20 +23,20 @@ import (
 // @Success 200 {object} string "Successfully logged out user with ID #id"
 // @Failure 401 {object} schemas.ErrorResponse "Error returned when the provided auth data is invalid"
 // @Failure 403 {object} schemas.ErrorResponse "Error returned when auth data was not provided"
-// @Failure 500 {object} schemas.ErrorResponse "Internal server error"
+// @Failure 500 {object} schemas.ErrorResponse "Returns an error message if there is a server-side issue"
 // @Router /api/logout [post]
 func Logout(w http.ResponseWriter, r *http.Request) {
 	// AccessToken validation
 	log.Println("Logout: validating access token")
 	userId, sessionToken, err := extractUidAndSessionToken(r)
 	if err != nil {
-		handlers_utils.HandleException(w, err)
+		general_utils.HandleException(w, err)
 		return
 	}
 	// here we will perform user session and cookies updation
 	cookies, err := updateSessionAndCookies(sessionToken)
 	if err != nil {
-		handlers_utils.ErrorResponse(w, "Session is closed, expired or does not exist.", http.StatusUnauthorized)
+		general_utils.ErrorResponse(w, "Session is closed, expired or does not exist.", http.StatusUnauthorized)
 		return
 	}
 	http.SetCookie(w, cookies)
@@ -44,7 +45,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	responseMsg := fmt.Sprintf("Successfully logged out user with ID #%d", userId)
 	err = handlers_utils.HandleJsonResponse(w, responseMsg)
 	if err != nil {
-		handlers_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 

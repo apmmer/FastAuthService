@@ -215,6 +215,11 @@ const docTemplate = `{
         },
         "/api/users": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "get many users based on pagination and sorting parameters",
                 "consumes": [
                     "application/json"
