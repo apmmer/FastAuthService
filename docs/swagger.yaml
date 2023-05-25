@@ -127,7 +127,7 @@ info:
   contact: {}
   description: API server for auth stuff
   title: Auth Service API
-  version: v.1.0.0
+  version: v1.0.0
 paths:
   /api/healthcheck:
     get:

@@ -9,7 +9,7 @@ import (
 )
 
 // @title Auth Service API
-// @version v.1.0.0
+// @version v1.0.0
 // @description API server for auth stuff
 
 // @host localhost:8080

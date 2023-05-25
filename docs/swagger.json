@@ -7,7 +7,7 @@
         "description": "API server for auth stuff",
         "title": "Auth Service API",
         "contact": {},
-        "version": "v.1.0.0"
+        "version": "v1.0.0"
     },
     "host": "localhost:8080",
     "basePath": "/",

@@ -13,7 +13,7 @@ func getEnv(key, fallback string) string {
 }
 
 func newMainSettings() *MainSettingsScheme {
-	// Загрузка настроек из окружения или использование значений по умолчанию
+	// Loading values from the environment or using default
 	return &MainSettingsScheme{
 		UsersDBURL:              getEnv("USERS_DB_URL", "postgres://admin:admin@auth_service_postgres:5432/users_db?sslmode=disable"),
 		Debug:                   getEnv("DEBUG", "true"),
@@ -35,4 +35,5 @@ func newMainSettings() *MainSettingsScheme {
 	}
 }
 
+// create global main settings object
 var MainSettings = newMainSettings()
