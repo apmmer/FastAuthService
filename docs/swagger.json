@@ -480,30 +480,39 @@
             "type": "object",
             "properties": {
                 "company_id": {
+                    "description": "A link to the user's company ID, nullable.\n@Example 1",
                     "type": "integer"
                 },
                 "created_at": {
+                    "description": "When record was created.\n@Format format(date-time)\n@Example 2023-05-18T18:57:39Z",
                     "type": "string"
                 },
                 "deleted_at": {
+                    "description": "When record was attempted to delete, nullable.\n@Format format(date-time)\n@Example 2023-05-18T18:57:39Z",
                     "type": "string"
                 },
                 "email": {
+                    "description": "The email address of a user.\nThis field is unique and not-null.\n@Format email\n@Example john@example.com",
                     "type": "string"
                 },
                 "id": {
+                    "description": "The auto-created unique identifier for the user.\n@Example 123",
                     "type": "integer"
                 },
                 "password": {
+                    "description": "A secret that only the creator of the record knows\n@Example 1234567",
                     "type": "string"
                 },
                 "rank": {
+                    "description": "Status of a user, nullable.\n@Example 1",
                     "type": "integer"
                 },
                 "screen_name": {
+                    "description": "The desired screenname for the user.\nThis field is required and must contain at least 4 characters.\n@Example jonhDoe123",
                     "type": "string"
                 },
                 "updated_at": {
+                    "description": "When record was updated last time.\n@Format format(date-time)\n@Example 2023-05-18T18:57:39Z",
                     "type": "string"
                 }
             }
@@ -522,7 +531,7 @@
                     "type": "integer"
                 },
                 "email": {
-                    "description": "The email address of the new user. This field is required and must be a valid email address.\n@Format email\n@Example user@example.com",
+                    "description": "The email address of the new user. This field is required and must be a valid email address.\n@Format email\n@Example john@example.com",
                     "type": "string"
                 },
                 "password": {
@@ -535,7 +544,7 @@
                     "type": "integer"
                 },
                 "screen_name": {
-                    "description": "The desired username for the new user. This field is required and must contain at least 4 characters.\n@MinLength 4\n@Example exampleUser",
+                    "description": "The desired username for the new user. This field is required and must contain at least 4 characters.\n@MinLength 4\n@Example jonhDoe123",
                     "type": "string",
                     "minLength": 4
                 }

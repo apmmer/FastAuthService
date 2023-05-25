@@ -3,22 +3,55 @@ definitions:
   models.User:
     properties:
       company_id:
+        description: |-
+          A link to the user's company ID, nullable.
+          @Example 1
         type: integer
       created_at:
+        description: |-
+          When record was created.
+          @Format format(date-time)
+          @Example 2023-05-18T18:57:39Z
         type: string
       deleted_at:
+        description: |-
+          When record was attempted to delete, nullable.
+          @Format format(date-time)
+          @Example 2023-05-18T18:57:39Z
         type: string
       email:
+        description: |-
+          The email address of a user.
+          This field is unique and not-null.
+          @Format email
+          @Example john@example.com
         type: string
       id:
+        description: |-
+          The auto-created unique identifier for the user.
+          @Example 123
         type: integer
       password:
+        description: |-
+          A secret that only the creator of the record knows
+          @Example 1234567
         type: string
       rank:
+        description: |-
+          Status of a user, nullable.
+          @Example 1
         type: integer
       screen_name:
+        description: |-
+          The desired screenname for the user.
+          This field is required and must contain at least 4 characters.
+          @Example jonhDoe123
         type: string
       updated_at:
+        description: |-
+          When record was updated last time.
+          @Format format(date-time)
+          @Example 2023-05-18T18:57:39Z
         type: string
     type: object
   schemas.CreateUserRequest:
@@ -34,7 +67,7 @@ definitions:
         description: |-
           The email address of the new user. This field is required and must be a valid email address.
           @Format email
-          @Example user@example.com
+          @Example john@example.com
         type: string
       password:
         description: |-
@@ -53,7 +86,7 @@ definitions:
         description: |-
           The desired username for the new user. This field is required and must contain at least 4 characters.
           @MinLength 4
-          @Example exampleUser
+          @Example jonhDoe123
         minLength: 4
         type: string
     required:
