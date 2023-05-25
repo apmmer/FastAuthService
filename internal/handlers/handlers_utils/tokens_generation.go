@@ -121,7 +121,7 @@ func ParseToken(tokenString string, secret string) (jwt.MapClaims, error) {
 func ExtractJWTFromHeader(r *http.Request) (string, error) {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" {
-		return "", &exceptions.ErrNoAuthData{Message: "Missing 'Authorization' header"}
+		return "", exceptions.MakeNoAuthDataError("Missing 'Authorization' header")
 	}
 	return authHeader, nil
 }

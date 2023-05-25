@@ -30,20 +30,20 @@ import (
 func RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	existingSessionToken, userId, err := extractAndValidateTokens(r)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 
 	accessToken, cookies, err := updateUserSessionAndGenerateTokens(r, existingSessionToken, userId)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	http.SetCookie(w, cookies)
 	// Return the new access token
 	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 
@@ -79,18 +79,21 @@ func updateUserSessionAndGenerateTokens(r *http.Request, sessionToken string, us
 
 	// getting and updation of session directly if user is valid using custom sql request
 	sessions, err := sessions_repo.OptimizedUpdateWithUserChecking(&expiresAt, sessionToken)
+
 	if err != nil {
-		switch err.(type) {
-		case *exceptions.ErrNotFound:
-			log.Println("Session for user was not found, it means filters are invalid, raising ErrUnauthorized")
-			return nil, nil, &exceptions.ErrUnauthorized{Message: fmt.Sprint("Session for user was not found.")}
-		default:
+		if customErr, ok := err.(*exceptions.DefaultError); ok {
+			if customErr.StatusCode == http.StatusNotFound {
+				return nil, nil, exceptions.MakeUnauthorizedError("Session for user was not found.")
+			}
 			return nil, nil, err
 		}
 	}
 	if len(*sessions) != 1 {
-		return nil, nil, fmt.Errorf("Found unexpected user session, please log in again.")
+		return nil, nil, exceptions.MakeInternalError(
+			"Found unexpected user session, please log in again.",
+		)
 	}
+	// HERE WE PROBABLY NEED TO DELETE ALL EXISTING SESSIONS
 
 	// getting device info
 	deviceInfo := handlers_utils.GetDeviceInfo(r)

@@ -34,13 +34,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	userId, err := processUser(r)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 
 	accessToken, cookies, err := generateUserSessionAndTokens(r, userId)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	// Set refresh token in cookies
@@ -49,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Create response with token
 	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 
@@ -58,7 +58,7 @@ func processUser(r *http.Request) (int, error) {
 	var input schemas.LoginInput
 	err := json.NewDecoder(r.Body).Decode(&input)
 	if err != nil {
-		return 0, &exceptions.ErrInputError{Message: fmt.Sprint("Invalid input")}
+		return 0, exceptions.MakeInvalidEntityError("can not parse schemas.LoginInput")
 	}
 
 	// Getting user from db
@@ -73,7 +73,7 @@ func processUser(r *http.Request) (int, error) {
 	// Checking password
 	isValid := general_utils.CheckHash(input.Password, user.Password)
 	if !isValid {
-		return 0, &exceptions.ErrUnauthorized{Message: fmt.Sprint("Invalid username or password")}
+		return 0, exceptions.MakeUnauthorizedError("Invalid username or password")
 	}
 	// return int UID
 	return int((*user).ID), nil

@@ -30,7 +30,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	log.Println("Logout: validating access token")
 	userId, sessionToken, err := extractUidAndSessionToken(r)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	// here we will perform user session and cookies updation
@@ -45,7 +45,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	responseMsg := fmt.Sprintf("Successfully logged out user with ID #%d", userId)
 	err = handlers_utils.HandleJsonResponse(w, responseMsg)
 	if err != nil {
-		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 

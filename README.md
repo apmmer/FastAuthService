@@ -10,6 +10,6 @@ coming soon
 ## How to run service  
  - clone project by `git clone https://github.com/vik-backend/FastAuthService.git`.  
  - Create a file **"./AuthService/.env"** and use it to set up environment.  
- - ensure [**Docker**](https://www.docker.com/) is running in your system.  
+ - ensure [**Docker**](https://www.docker.com/) is running in your system.    
  - execute command `docker-compose up --build` from project **"./AuthService/"** (root) directory, where **docker-compose.yml** is located.  
   

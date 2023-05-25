@@ -14,17 +14,12 @@ func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderin
 	sql := fmt.Sprintf("SELECT * FROM %s", tableName)
 	var args []interface{}
 
-	filterStr, args, err := base_repo_utils.ParseSQLFilters(filters, &args)
-	if err != nil {
-		return nil, &exceptions.ErrInvalidEntity{
-			Message: fmt.Sprintf("failed to validate filters: %v", err),
-		}
-	}
+	filterStr, args := base_repo_utils.ParseSQLFilters(filters, &args)
 	if filterStr != "" {
 		sql += " WHERE" + filterStr
 	}
 
-	sql, args, err = processListParams(sql, args, orderBy, orderingDirection, limit, offset)
+	sql, args, err := processListParams(sql, args, orderBy, orderingDirection, limit, offset)
 	if err != nil {
 		return nil, err
 	}
@@ -45,9 +40,9 @@ func processListParams(sql string, args []interface{}, orderBy *string, ordering
 		if orderingDirection != nil {
 			direction := strings.ToUpper(*orderingDirection)
 			if direction != "ASC" && direction != "DESC" {
-				return "", nil, &exceptions.ErrInvalidEntity{
-					Message: fmt.Sprintf("Invalid order direction: %s", direction),
-				}
+				return "", nil, exceptions.MakeInvalidEntityError(
+					fmt.Sprintf("Invalid order direction: %s", direction),
+				)
 			}
 			sql += fmt.Sprintf(" %s", direction)
 		}
@@ -72,14 +67,14 @@ func GetOne(tableName string, filters *map[string]interface{}) (map[string]inter
 	records, err := GetMany(tableName, nil, nil, nil, nil, filters)
 	log.Printf("base_repo.GetOne: Got %d records using GetMany", len(records))
 	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("could not perform GetMany method", err)
+		return nil, general_utils.UpdateException("could not perform GetMany method", err)
 	}
 	// we expect that we have only 1 record, so validate:
 	if records == nil || len(records) == 0 {
-		return nil, &exceptions.ErrNotFound{Message: "got no records according filters."}
+		return nil, exceptions.MakeNotFoundError("got no records according filters.")
 	}
 	if len(records) > 1 {
-		return nil, &exceptions.ErrMultipleEntries{Message: "got multiple records according filters, but expected 1."}
+		return nil, exceptions.MakeMultipleEntriesError("got multiple records according filters, but expected 1.")
 	}
 	return records[0], nil
 }

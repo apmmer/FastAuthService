@@ -26,7 +26,7 @@ func CreateSession(userID uint, token string, expiresAt *time.Time) (*models.Use
 	id, err := base_repo.CreateOne(
 		configs.MainSettings.SessionsTableName, fields, values)
 	if err != nil {
-		err = general_utils.UpdateExceptionMsg("failed to create session", err)
+		err = general_utils.UpdateException("failed to create session", err)
 		return nil, err
 	}
 	// id edition

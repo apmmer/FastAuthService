@@ -34,7 +34,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 
 	user, err := users_repo.GetUser(&filters)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	log.Println("Successfully got result from users_repo.GetUser")

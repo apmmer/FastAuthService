@@ -12,16 +12,9 @@ func Update(tableName string, filters *map[string]interface{}, updateData *map[s
 	sql := fmt.Sprintf("UPDATE %s", tableName)
 	setFieldsStr, args, err := parseSQLUpdateData(updateData)
 	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("could not parse sql updateData", err)
+		return nil, general_utils.UpdateException("could not parse sql updateData", err)
 	}
-	filterStr, args, err := base_repo_utils.ParseSQLFilters(filters, &args)
-	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("could not parse sql filters", err)
-	}
-	// returnFieldsStr, args, err := base_repo_utils.ParseSQLReturningFields(returningFields)
-	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("could not parse sql returningFields", err)
-	}
+	filterStr, args := base_repo_utils.ParseSQLFilters(filters, &args)
 	if setFieldsStr != "" {
 		sql += " SET" + setFieldsStr
 	}
@@ -31,7 +24,7 @@ func Update(tableName string, filters *map[string]interface{}, updateData *map[s
 
 	sql += " RETURNING *"
 	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("could not parse sql returningFields", err)
+		return nil, general_utils.UpdateException("could not parse sql returningFields", err)
 	}
 	results, err := ExecuteRowParseList(sql, args)
 	if err != nil {

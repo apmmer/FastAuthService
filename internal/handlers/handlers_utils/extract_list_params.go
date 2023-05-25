@@ -18,9 +18,7 @@ func ExtractListParams(r *http.Request) (*schemas.ListParams, error) {
 	// Validate parsed params
 	err = (*params).Validate()
 	if err != nil {
-		return nil, &exceptions.ErrInvalidEntity{
-			Message: fmt.Sprintf("could not prepare validate params: %v", err),
-		}
+		return nil, exceptions.MakeInvalidEntityError(fmt.Sprintf("could not prepare validate params: %v", err))
 	}
 
 	return params, nil
@@ -37,9 +35,7 @@ func parseQueryParams(r *http.Request) (*schemas.ListParams, error) {
 	if limitStr != "" {
 		limit, err := strconv.Atoi(limitStr)
 		if err != nil {
-			return nil, &exceptions.ErrInvalidEntity{
-				Message: fmt.Sprintf("could not validate limit: %v", err),
-			}
+			return nil, exceptions.MakeInvalidEntityError(fmt.Sprintf("could not validate limit: %v", err))
 		}
 		params.Limit = &limit
 	}
@@ -48,9 +44,7 @@ func parseQueryParams(r *http.Request) (*schemas.ListParams, error) {
 	if offsetStr != "" {
 		offset, err := strconv.Atoi(offsetStr)
 		if err != nil {
-			return nil, &exceptions.ErrInvalidEntity{
-				Message: fmt.Sprintf("could not validate offset: %v", err),
-			}
+			return nil, exceptions.MakeInvalidEntityError(fmt.Sprintf("could not validate offset: %v", err))
 		}
 		params.Offset = &offset
 	}
@@ -88,7 +82,7 @@ func parseSorting(sorting *string) (*string, *string, error) {
 		errorMsg = "could not parse sorting: ordering must be 'ASC' or 'DESC'."
 	}
 	if errorMsg != "" {
-		return nil, nil, &exceptions.ErrInvalidEntity{Message: errorMsg}
+		return nil, nil, exceptions.MakeInvalidEntityError(errorMsg)
 	}
 
 	return &fieldName, &ordering, nil

@@ -29,14 +29,14 @@ func GetUsersList(w http.ResponseWriter, r *http.Request) {
 	log.Println("Got request to fetch many users.")
 	params, err := handlers_utils.ExtractListParams(r)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 
 	// Call GetList from the repo
 	users, err := users_repo.GetList(*params)
 	if err != nil {
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	log.Printf("Successfully got users = %v", users)
@@ -47,6 +47,6 @@ func GetUsersList(w http.ResponseWriter, r *http.Request) {
 	// Prepare response
 	err = handlers_utils.HandleJsonResponse(w, users)
 	if err != nil {
-		general_utils.HandleException(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		general_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }

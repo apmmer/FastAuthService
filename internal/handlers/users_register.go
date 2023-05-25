@@ -48,7 +48,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	userRes, err := users_repo.CreateUser(userReq)
 	if err != nil {
 		log.Println("Faced an error in users_repo.CreateUser")
-		general_utils.HandleException(w, err)
+		general_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	// Setting the status 201

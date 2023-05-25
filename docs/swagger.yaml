@@ -120,6 +120,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Show server status
       tags:
       - Health
@@ -159,6 +161,8 @@ paths:
           description: Returns an error message if there is a server-side issue
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Logs in a user
       tags:
       - Auth
@@ -184,7 +188,7 @@ paths:
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
         "500":
-          description: Internal server error
+          description: Returns an error message if there is a server-side issue
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
       security:
@@ -306,6 +310,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Register new user
       tags:
       - Users
@@ -349,6 +355,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/schemas.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get user by ID
       tags:
       - Users

@@ -42,9 +42,9 @@ func FieldInModelFields(attribute string, modelFields []string) error {
 		}
 	}
 	if !fieldFound {
-		return &exceptions.ErrInvalidEntity{
-			Message: fmt.Sprintf("attribute %s was not found in model", attribute),
-		}
+		return exceptions.MakeInvalidEntityError(
+			fmt.Sprintf("attribute %s was not found in model.", attribute),
+		)
 	}
 	return nil
 }

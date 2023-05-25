@@ -5,69 +5,6 @@ package exceptions
 
 import "net/http"
 
-// ErrNotFound is used when no entries are found according to filters.
-type ErrNotFound struct {
-	Message string
-}
-
-func (e *ErrNotFound) Error() string {
-	return e.Message
-}
-
-// ErrMultipleEntries is used when too many entries are found and less were expected.
-type ErrMultipleEntries struct {
-	Message string
-}
-
-func (e *ErrMultipleEntries) Error() string {
-	return e.Message
-}
-
-// ErrInvalidEntity is used when input data validation fails.
-type ErrInvalidEntity struct {
-	Message string
-}
-
-func (e *ErrInvalidEntity) Error() string {
-	return e.Message
-}
-
-// ErrDbConflict is used when there is a conflict in database entries.
-type ErrDbConflict struct {
-	Message string
-}
-
-func (e *ErrDbConflict) Error() string {
-	return e.Message
-}
-
-// ErrNoAuthData is used when authentication data was not provided.
-type ErrNoAuthData struct {
-	Message string
-}
-
-func (e *ErrNoAuthData) Error() string {
-	return e.Message
-}
-
-// ErrUnauthorized is used when the authentication data is invalid.
-type ErrUnauthorized struct {
-	Message string
-}
-
-func (e *ErrUnauthorized) Error() string {
-	return e.Message
-}
-
-// ErrInputError is used when there is a problem with input data (in endpoint).
-type ErrInputError struct {
-	Message string
-}
-
-func (e *ErrInputError) Error() string {
-	return e.Message
-}
-
 // DefaultError is an error with default message and associated status code for server error response
 // All errors constructors will use this class to return.
 type DefaultError struct {
@@ -86,7 +23,7 @@ func (e *DefaultError) GetStatusCode() int {
 // Now declaring functions-fabrics (pattern)
 
 // MakeNotFoundError is used to create an error, when no entries are found according to filters.
-func MakeNotFoundError(message string) error {
+func MakeNotFoundError(message string) *DefaultError {
 	if message == "" {
 		message = "Object not found."
 	}
@@ -97,7 +34,7 @@ func MakeNotFoundError(message string) error {
 }
 
 // MakeNotFoundError is used to create an error, when no entries are found according to filters.
-func MakeMultipleEntriesError(message string) error {
+func MakeMultipleEntriesError(message string) *DefaultError {
 	if message == "" {
 		message = "Found multiple records, which is unexpected."
 	}
@@ -108,7 +45,7 @@ func MakeMultipleEntriesError(message string) error {
 }
 
 // MakeInvalidEntityError is used to create an error, when there is a problem with input data (in endpoint).
-func MakeInvalidEntityError(message string) error {
+func MakeInvalidEntityError(message string) *DefaultError {
 	if message == "" {
 		message = "Input data is invalid."
 	}
@@ -118,7 +55,7 @@ func MakeInvalidEntityError(message string) error {
 	}
 }
 
-func MakeDbConflictError(message string) error {
+func MakeDbConflictError(message string) *DefaultError {
 	if message == "" {
 		message = "Conflict error: can not create/modify db record."
 	}
@@ -128,7 +65,7 @@ func MakeDbConflictError(message string) error {
 	}
 }
 
-func MakeNoAuthDataError(message string) error {
+func MakeNoAuthDataError(message string) *DefaultError {
 	if message == "" {
 		message = "Authentication data was not provided or can not be parsed."
 	}
@@ -138,7 +75,7 @@ func MakeNoAuthDataError(message string) error {
 	}
 }
 
-func MakeUnauthorizedError(message string) error {
+func MakeUnauthorizedError(message string) *DefaultError {
 	if message == "" {
 		message = "Authentication data is invalid."
 	}
@@ -148,7 +85,7 @@ func MakeUnauthorizedError(message string) error {
 	}
 }
 
-func MakeValidationError(message string) error {
+func MakeValidationError(message string) *DefaultError {
 	if message == "" {
 		message = "Validation for data was failed."
 	}
@@ -159,7 +96,7 @@ func MakeValidationError(message string) error {
 }
 
 // MakeInternalError is used to create an error, when reason can not be explained for client.
-func MakeInternalError(message string) error {
+func MakeInternalError(message string) *DefaultError {
 	if message == "" {
 		message = "Server can not process your request."
 	}

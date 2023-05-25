@@ -36,7 +36,7 @@ func CreateUser(request schemas.CreateUserRequest) (*models.User, error) {
 	id, err := base_repo.CreateOne(
 		configs.MainSettings.UsersTableName, fields, values)
 	if err != nil {
-		err = general_utils.UpdateExceptionMsg("failed to create user", err)
+		err = general_utils.UpdateException("failed to create user", err)
 		return nil, err
 	}
 	// Setting the generated ID to the user model

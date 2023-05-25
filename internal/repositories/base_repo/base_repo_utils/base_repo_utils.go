@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
-func ParseSQLFilters(filters *map[string]interface{}, queryArgs *[]interface{}) (string, []interface{}, error) {
+func ParseSQLFilters(filters *map[string]interface{}, queryArgs *[]interface{}) (string, []interface{}) {
 	filterStr := ""
 	args := *queryArgs
 
@@ -25,7 +25,7 @@ func ParseSQLFilters(filters *map[string]interface{}, queryArgs *[]interface{}) 
 		filterStr = strings.TrimSuffix(filterStr, " AND") // Remove the trailing ' AND'
 	}
 
-	return filterStr, args, nil
+	return filterStr, args
 }
 
 func ParseSQLResults(rowsPointer *pgx.Rows) (*[]map[string]interface{}, error) {

@@ -16,12 +16,12 @@ func UpdateSessions(filters *map[string]interface{}, updateData *map[string]inte
 	// validate filters
 	err := repositories_utils.ValidateMapFields(filters, models.UserSession{})
 	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("failed to validate filters", err)
+		return nil, general_utils.UpdateException("failed to validate filters", err)
 	}
 	// validate updateData
 	err = repositories_utils.ValidateMapFields(updateData, models.UserSession{})
 	if err != nil {
-		return nil, general_utils.UpdateExceptionMsg("failed to validate filters", err)
+		return nil, general_utils.UpdateException("failed to validate filters", err)
 	}
 	// call update returning updated items (type *[]map[string]interface{})
 	results, err := base_repo.Update(
@@ -31,11 +31,11 @@ func UpdateSessions(filters *map[string]interface{}, updateData *map[string]inte
 	)
 	if err != nil {
 		fmt.Println("failed to update sessions")
-		return nil, general_utils.UpdateExceptionMsg("failed to update sessions", err)
+		return nil, general_utils.UpdateException("failed to update sessions", err)
 	}
 	if len(*results) == 0 {
 		fmt.Println("sessions not found")
-		return nil, &exceptions.ErrNotFound{Message: "valid sessions not found"}
+		return nil, exceptions.MakeNotFoundError("valid sessions not found.")
 	}
 
 	updatedItems := parseListToListOfSessions(results)
@@ -63,11 +63,12 @@ func OptimizedUpdateWithUserChecking(expires_at *time.Time, token string) (*[]mo
 	results, err := base_repo.ExecuteRowParseList(sqlQuery, args)
 	if err != nil {
 		log.Println("failed to update sessions")
-		return nil, general_utils.UpdateExceptionMsg("failed to update sessions", err)
+		err = general_utils.UpdateException("failed to update sessions", err)
+		return nil, err
 	}
 	if len(*results) == 0 {
 		log.Println("sessions not found")
-		return nil, &exceptions.ErrNotFound{Message: "sessions not found"}
+		return nil, exceptions.MakeNotFoundError("sessions not found. ")
 	}
 	updatedItems := parseListToListOfSessions(results)
 	return &updatedItems, nil

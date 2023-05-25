@@ -22,9 +22,7 @@ func CreateOne(tableName string, fields []string, values []interface{}) (int, er
 	var id int
 	err := database.Pool.QueryRow(context.Background(), sql, values...).Scan(&id)
 	if err != nil {
-		return 0, &exceptions.ErrDbConflict{
-			Message: fmt.Sprintf("could not insert into %s table: %v", tableName, err),
-		}
+		return 0, exceptions.MakeDbConflictError(fmt.Sprintf("could not insert into %s table: %v", tableName, err))
 	}
 
 	return id, nil

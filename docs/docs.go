@@ -18,6 +18,11 @@ const docTemplate = `{
     "paths": {
         "/api/healthcheck": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Get server status",
                 "consumes": [
                     "application/json"
@@ -59,6 +64,11 @@ const docTemplate = `{
         },
         "/api/login": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Authenticates a user using email and password, and generates a new JWT. Also sets refresh token in cookies.",
                 "consumes": [
                     "application/json"
@@ -156,7 +166,7 @@ const docTemplate = `{
                         }
                     },
                     "500": {
-                        "description": "Internal server error",
+                        "description": "Returns an error message if there is a server-side issue",
                         "schema": {
                             "$ref": "#/definitions/schemas.ErrorResponse"
                         }
@@ -288,6 +298,11 @@ const docTemplate = `{
                 }
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Register a new user with email, screen_name, and password",
                 "consumes": [
                     "application/json"
@@ -346,6 +361,11 @@ const docTemplate = `{
         },
         "/api/users/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "description": "Retrieve a user from the database by ID",
                 "produces": [
                     "application/json"

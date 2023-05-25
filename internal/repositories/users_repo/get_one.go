@@ -2,7 +2,7 @@ package users_repo
 
 import (
 	"AuthService/configs"
-	"AuthService/internal/exceptions"
+	"AuthService/internal/general_utils"
 	"AuthService/internal/models"
 	"AuthService/internal/repositories/base_repo"
 	"AuthService/internal/repositories/repositories_utils"
@@ -14,7 +14,10 @@ import (
 func GetUser(filters *map[string]interface{}) (*models.User, error) {
 	err := repositories_utils.ValidateMapFields(filters, models.User{})
 	if err != nil {
-		return nil, &exceptions.ErrInvalidEntity{Message: fmt.Sprintf("failed to validate filters: %v", err)}
+		return nil, general_utils.UpdateException(
+			fmt.Sprintf("failed to validate filters: %v", err),
+			err,
+		)
 	}
 	result, err := base_repo.GetOne(
 		configs.MainSettings.UsersTableName,
