@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/users_repo"
 	"AuthService/internal/schemas"
@@ -32,7 +31,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Decoding the request body into the CreateUserRequest structure
 	err := json.NewDecoder(r.Body).Decode(&userReq)
 	if err != nil {
-		general_utils.ErrorResponse(w, err.Error(), http.StatusBadRequest)
+		handlers_utils.ErrorResponse(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 	log.Println("Decoded to CreateUserRequest")
@@ -40,7 +39,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	// Request ralidation
 	err = userReq.Validate()
 	if err != nil {
-		general_utils.ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
+		handlers_utils.ErrorResponse(w, err.Error(), http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -48,7 +47,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	userRes, err := users_repo.CreateUser(userReq)
 	if err != nil {
 		log.Println("Faced an error in users_repo.CreateUser")
-		general_utils.HandleExceptionResponse(w, err)
+		handlers_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	// Setting the status 201

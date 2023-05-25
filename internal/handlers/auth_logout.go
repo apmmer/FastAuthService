@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"AuthService/configs"
-	"AuthService/internal/general_utils"
 	"AuthService/internal/handlers/handlers_utils"
 	"AuthService/internal/repositories/sessions_repo"
 	"fmt"
@@ -30,13 +29,13 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	log.Println("Logout: validating access token")
 	userId, sessionToken, err := extractUidAndSessionToken(r)
 	if err != nil {
-		general_utils.HandleExceptionResponse(w, err)
+		handlers_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	// here we will perform user session and cookies updation
 	cookies, err := updateSessionAndCookies(sessionToken)
 	if err != nil {
-		general_utils.ErrorResponse(w, "Session is closed, expired or does not exist.", http.StatusUnauthorized)
+		handlers_utils.ErrorResponse(w, "Session is closed, expired or does not exist.", http.StatusUnauthorized)
 		return
 	}
 	http.SetCookie(w, cookies)
@@ -45,7 +44,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	responseMsg := fmt.Sprintf("Successfully logged out user with ID #%d", userId)
 	err = handlers_utils.HandleJsonResponse(w, responseMsg)
 	if err != nil {
-		general_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		handlers_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 

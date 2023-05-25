@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"AuthService/configs"
-	"AuthService/internal/general_utils"
+	"AuthService/internal/handlers/handlers_utils"
 	"log"
 	"net/http"
 	"strings"
@@ -21,12 +21,12 @@ func ApiKeyMiddleware(next http.Handler) http.Handler {
 		log.Printf("ApiKeyMiddleware: headerApiKey=%s", headerApiKey)
 		// Check for the header
 		if headerApiKey == "" {
-			general_utils.ErrorResponse(w, "Missing API Key", http.StatusForbidden)
+			handlers_utils.ErrorResponse(w, "Missing API Key", http.StatusForbidden)
 			return
 		}
 		// validate the api-key
 		if headerApiKey != configs.MainSettings.ApiKey {
-			general_utils.ErrorResponse(w, "Invalid API Key", http.StatusUnauthorized)
+			handlers_utils.ErrorResponse(w, "Invalid API Key", http.StatusUnauthorized)
 			return
 		}
 		next.ServeHTTP(w, r)

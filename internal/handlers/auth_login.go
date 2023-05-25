@@ -34,13 +34,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	userId, err := processUser(r)
 	if err != nil {
-		general_utils.HandleExceptionResponse(w, err)
+		handlers_utils.HandleExceptionResponse(w, err)
 		return
 	}
 
 	accessToken, cookies, err := generateUserSessionAndTokens(r, userId)
 	if err != nil {
-		general_utils.HandleExceptionResponse(w, err)
+		handlers_utils.HandleExceptionResponse(w, err)
 		return
 	}
 	// Set refresh token in cookies
@@ -49,7 +49,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// Create response with token
 	err = handlers_utils.HandleJsonResponse(w, accessToken)
 	if err != nil {
-		general_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
+		handlers_utils.HandleExceptionResponse(w, fmt.Errorf("Error while handling JSON response: %v", err))
 	}
 }
 
@@ -90,7 +90,12 @@ func generateUserSessionAndTokens(r *http.Request, userId int) (*schemas.TokenRe
 		return nil, nil, err
 	}
 	// Generate a session token for new session
-	sessionToken, err := handlers_utils.GenerateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
+	sessionToken, err := generateSessionToken(&deviceInfo, configs.MainSettings.SessionSecret)
+	if err != nil {
+		// hide origin message and log it.
+		log.Printf("Can not create session token -> %v", err)
+		return nil, nil, exceptions.MakeInternalError("Can not create session token.")
+	}
 	// generate the expiration date for both session and refreshToken
 	expiresAt := time.Now().Add(time.Minute * time.Duration(configs.MainSettings.RefreshTokenLifeMinutes))
 	// create session
@@ -104,4 +109,16 @@ func generateUserSessionAndTokens(r *http.Request, userId int) (*schemas.TokenRe
 		return nil, nil, err
 	}
 	return accessToken, cookies, nil
+}
+
+// GenerateSessionToken creates an encrypted string that will be a token for the session
+func generateSessionToken(deviceInfo *schemas.DeviceInfo, secretKey string) (string, error) {
+	log.Println("Started session token encryption.")
+	data := deviceInfo.IPAddress + "|" + deviceInfo.UserAgent
+	cipherText, err := handlers_utils.CipherString(data, secretKey)
+	if err != nil {
+		log.Printf("Can not create session token -> %v", err)
+		return "", exceptions.MakeInternalError("Can not create session token.")
+	}
+	return cipherText, nil
 }

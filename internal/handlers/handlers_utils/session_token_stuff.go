@@ -1,7 +1,6 @@
 package handlers_utils
 
 import (
-	"AuthService/internal/schemas"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -11,10 +10,8 @@ import (
 	"log"
 )
 
-func GenerateSessionToken(deviceInfo *schemas.DeviceInfo, secretKey string) (string, error) {
-	log.Println("Started session token encryption.")
-	data := deviceInfo.IPAddress + "|" + deviceInfo.UserAgent
-
+// CipherString creates an encrypted string from provided data(string) and secret(string)
+func CipherString(inputString string, secretKey string) (string, error) {
 	// cipher creation
 	generatedCipher, err := aes.NewCipher([]byte(secretKey))
 	if err != nil {
@@ -35,7 +32,7 @@ func GenerateSessionToken(deviceInfo *schemas.DeviceInfo, secretKey string) (str
 		return "", err
 	}
 	// finally encrypt it!
-	cipherTextBytes := gcm.Seal(nonce, nonce, []byte(data), nil)
+	cipherTextBytes := gcm.Seal(nonce, nonce, []byte(inputString), nil)
 
 	// convert to string with base64 will be successfull
 	// even if some bytes in cipherText are incorrect
@@ -44,7 +41,7 @@ func GenerateSessionToken(deviceInfo *schemas.DeviceInfo, secretKey string) (str
 	return cipherText, nil
 }
 
-func DecryptSessionToken(encryptedData string, secretKey string) (string, error) {
+func DecryptCipherString(encryptedData string, secretKey string) (string, error) {
 	ciphertext, err := base64.StdEncoding.DecodeString(encryptedData)
 	if err != nil {
 		return "", err

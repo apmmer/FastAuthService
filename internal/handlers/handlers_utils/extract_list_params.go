@@ -9,9 +9,10 @@ import (
 	"strings"
 )
 
+// extract params from request and create validated schemas.ListParams object
 func ExtractListParams(r *http.Request) (*schemas.ListParams, error) {
 	// Parse params
-	params, err := parseQueryParams(r)
+	params, err := parseQueryListParams(r)
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +25,8 @@ func ExtractListParams(r *http.Request) (*schemas.ListParams, error) {
 	return params, nil
 }
 
-func parseQueryParams(r *http.Request) (*schemas.ListParams, error) {
+// extract params from request and parse them to schemas.ListParams
+func parseQueryListParams(r *http.Request) (*schemas.ListParams, error) {
 	limitStr := r.URL.Query().Get("limit")
 	offsetStr := r.URL.Query().Get("offset")
 	sortStr := r.URL.Query().Get("sort")
@@ -62,6 +64,10 @@ func parseQueryParams(r *http.Request) (*schemas.ListParams, error) {
 	return &params, nil
 }
 
+// parseSorting parses specific syntax sort (*string) param
+// returns:
+//
+//	fieldname (*string), ordering (*string), error
 func parseSorting(sorting *string) (*string, *string, error) {
 	if sorting == nil {
 		return nil, nil, nil
