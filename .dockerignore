@@ -1,2 +1,9 @@
-trash/
+# Private files
 .env
+
+# Trash files
+trash/
+
+# Other dev files
+info.dev
+calculator.*
