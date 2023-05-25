@@ -7,7 +7,10 @@ import (
 	"strings"
 )
 
-// Updates records in given table
+// Updates records in given table according filters.
+// Returns:
+//
+//	results (*[]map[string]interface{}) - parsed list results.
 func Update(tableName string, filters *map[string]interface{}, updateData *map[string]interface{}) (*[]map[string]interface{}, error) {
 	sql := fmt.Sprintf("UPDATE %s", tableName)
 	setFieldsStr, args, err := parseSQLUpdateData(updateData)

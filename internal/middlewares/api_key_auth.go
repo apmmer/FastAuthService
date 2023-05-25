@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Checks provided api-key for each endpoint, excluding '/swagger'
+// ApiKeyMiddleware checks provided api-key for the endpoint
 func ApiKeyMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if the request URL path starts with /swagger

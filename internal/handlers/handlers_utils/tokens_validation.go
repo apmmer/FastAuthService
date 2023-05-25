@@ -11,6 +11,10 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+// ValidateRefreshTokenCookie extracts refresh_token cookie and validates it's claims.
+// Returns:
+//
+//	refresh token claims (*jwt.MapClaims), error
 func ValidateRefreshTokenCookie(r *http.Request, headerAccessToken string) (*jwt.MapClaims, error) {
 	c, err := r.Cookie("refresh_token")
 	if err != nil {
@@ -43,6 +47,8 @@ func ValidateRefreshTokenCookie(r *http.Request, headerAccessToken string) (*jwt
 	return &refreshClaims, nil
 }
 
+// Takes 'ExpiresAt' from provided claims and validates it.
+// Note: Claims must contain 'ExpiresAt'.
 func ValidateTokenExpiresAt(claims *jwt.MapClaims) error {
 	if expiresAtFloat, ok := (*claims)["ExpiresAt"].(float64); ok {
 		expiresAt := int64(expiresAtFloat)
@@ -66,6 +72,12 @@ func ValidateTokenDeviceInfo(r *http.Request, accessClaims *jwt.MapClaims) error
 	return nil
 }
 
+// Extracts access token from header and validates it.
+// As during this process claims must be extracted,
+// returns claims for both tokens: access and refresh.
+// Returns:
+//
+//	accessClaims (*jwt.MapClaims), refreshClaims (*jwt.MapClaims), error
 func ValidateAccessTokenHeader(r *http.Request) (*jwt.MapClaims, *jwt.MapClaims, error) {
 	headerAccessToken, err := ExtractJWTFromHeader(r)
 	if err != nil {

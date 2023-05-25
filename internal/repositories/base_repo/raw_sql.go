@@ -8,6 +8,10 @@ import (
 	"fmt"
 )
 
+// Executes provided raw SQL query and parses sql result, expecting a list of 'rows'.
+// Returns:
+//
+//	results (*[]map[string]interface{}) - already parsed sql pgx.rows to golang objects
 func ExecuteRowParseList(sql string, args []interface{}) (*[]map[string]interface{}, error) {
 	// execute SQL query (getting pgx.Rows)
 	rows, err := database.Pool.Query(context.Background(), sql, args...)

@@ -12,6 +12,11 @@ import (
 	"time"
 )
 
+// Updates sessions records in db according provided data and filters.
+// Returns:
+//
+//	updated items (*[]models.UserSession) - a pointer to a list of updated (and parsed) results
+//	error
 func UpdateSessions(filters *map[string]interface{}, updateData *map[string]interface{}) (*[]models.UserSession, error) {
 	// validate filters
 	err := repositories_utils.ValidateMapFields(filters, models.UserSession{})

@@ -4,10 +4,15 @@ import (
 	"reflect"
 )
 
+// Extracts fields and values from model (or schema) instance.
+// Returns:
+//
+//	fields ([]string) - a list of model's fields one by one
+//	values ([]interface{}) - a list of model fields's values, one by one, any type.
 func GetFieldsAndValues(model interface{}, ignore_field string) ([]string, []interface{}) {
 	val := reflect.ValueOf(model)
 
-	// if the model is a pointer, then you need to dereference it to get the values
+	// if the model is a pointer, then we need to dereference it to get the values
 	if val.Kind() == reflect.Ptr {
 		val = val.Elem()
 	}

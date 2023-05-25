@@ -52,7 +52,6 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 	// Setting the status 201
 	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
 
 	// Sending the data of the created user to the client in JSON format
 	err = handlers_utils.HandleJsonResponse(w, userRes)

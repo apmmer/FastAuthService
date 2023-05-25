@@ -14,6 +14,7 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// Returns a mux.NewRouter() with added endpoints and declared middlewares.
 func GetRouter() http.Handler {
 	router := mux.NewRouter()
 	router.Use(middlewares.ApiKeyMiddleware)

@@ -41,6 +41,8 @@ func CipherString(inputString string, secretKey string) (string, error) {
 	return cipherText, nil
 }
 
+// decrypts the string using the transmitted secret key.
+// Returns the object to its original form, before using the function CipherString
 func DecryptCipherString(encryptedData string, secretKey string) (string, error) {
 	ciphertext, err := base64.StdEncoding.DecodeString(encryptedData)
 	if err != nil {

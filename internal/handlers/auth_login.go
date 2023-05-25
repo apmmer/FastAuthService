@@ -53,6 +53,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Fetches User object from using users_repo and validates it's password
+// Returns:
+//
+//	uid (int), error
 func processUser(r *http.Request) (int, error) {
 	// Decode body
 	var input schemas.LoginInput
@@ -79,6 +83,10 @@ func processUser(r *http.Request) (int, error) {
 	return int((*user).ID), nil
 }
 
+// This function contains logic of tokens generation and session creation.
+// Returns:
+//
+//	accessToken object (*schemas.TokenResponse), refresh token cookies (*http.Cookie), error
 func generateUserSessionAndTokens(r *http.Request, userId int) (*schemas.TokenResponse, *http.Cookie, error) {
 	// getting device info
 	deviceInfo := handlers_utils.GetDeviceInfo(r)

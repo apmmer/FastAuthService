@@ -33,6 +33,7 @@ func ValidateMapFields(filters *map[string]interface{}, model interface{}) error
 	return nil
 }
 
+// Validates that provided attribute (string) is in provided model's fields.
 func FieldInModelFields(attribute string, modelFields []string) error {
 	fieldFound := false
 	for _, modelField := range modelFields {

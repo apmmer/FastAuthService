@@ -10,8 +10,12 @@ import (
 	"fmt"
 )
 
+// Retrieves a list of records of models.User and serializes a result
+// Returns:
+//
+//	users (*[]models.User) - a list of retrieved users (models.User) according filters.
 func GetList(params schemas.ListParams) (*[]models.User, error) {
-	fmt.Println("Called users_repo.GetManyUsers")
+	fmt.Println("Called users_repo.GetList")
 
 	// ensure SortingField in models field
 	if params.SortingField != nil {

@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+// Performs SELECT operation to DB according provided params.
+// Returns:
+//
+//	results ([]map[string]interface{}) - parsed list results.
 func GetMany(tableName string, limit *int, offset *int, orderBy *string, orderingDirection *string, filters *map[string]interface{}) ([]map[string]interface{}, error) {
 	log.Printf("Called base_repo.GetMany filters=%v", filters)
 	sql := fmt.Sprintf("SELECT * FROM %s", tableName)
