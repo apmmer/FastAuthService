@@ -1,3 +1,20 @@
+# Ignore git directory
+.git
+
+# Ignore .exe files
+*.exe
+
+# Ignore license and readme
+LICENSE
+README.md
+
+# Ignore dev sql files
+database/dev_init.sql
+
+# Ignore other unnecessary files
+.dockerignore
+.gitignore
+
 # Private files
 .env
 
