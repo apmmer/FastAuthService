@@ -28,7 +28,7 @@ func CreateOne(tableName string, fields []string, values []interface{}) (int, er
 	return id, nil
 }
 
-// placeholders generates a string of PostgreSQL placeholder syntax for SQL queries
+// addPlaceholders generates a string of PostgreSQL placeholder syntax for SQL queries
 func addPlaceholders(n int) string {
 	if n < 1 {
 		return ""
