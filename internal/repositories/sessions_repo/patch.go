@@ -62,8 +62,7 @@ func OptimizedUpdateWithUserChecking(expires_at *time.Time, token string) (*[]mo
 	}
 	results, err := base_repo.ExecuteRowParseList(sqlQuery, args)
 	if err != nil {
-		log.Println("failed to update sessions")
-		err = general_utils.UpdateException("failed to update sessions", err)
+		err = general_utils.UpdateException("repo: failed to update sessions", err)
 		return nil, err
 	}
 	if len(*results) == 0 {
