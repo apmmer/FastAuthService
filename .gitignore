@@ -23,6 +23,7 @@ go.work
 
 # Private files
 .env
+!.env.test
 
 # Trash files
 trash/
