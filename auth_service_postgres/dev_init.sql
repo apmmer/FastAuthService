@@ -7,6 +7,10 @@ BEGIN
    END IF;
 END $$;
 
+ALTER SYSTEM SET ssl_cert_file TO '/var/lib/postgresql/server.crt';
+ALTER SYSTEM SET ssl_key_file TO '/var/lib/postgresql/server.key';
+ALTER SYSTEM SET ssl TO 'on';
+
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS companies (
