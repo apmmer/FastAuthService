@@ -4,16 +4,9 @@
 # Ignore .exe files
 *.exe
 
-# Ignore license and readme
-LICENSE
-README.md
-
-# Ignore dev sql files
-database/dev_init.sql
-
-# Ignore other unnecessary files
+# Ignore unnecessary files
 .dockerignore
-.gitignore
+*.log
 
 # Private files
 .env
