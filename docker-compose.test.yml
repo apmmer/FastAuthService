@@ -1,0 +1,44 @@
+version: '3.8'
+
+# launch this by "docker-compose -f docker-compose.test.yml up --exit-code-from auth_service_api_test"
+
+services:
+
+  auth_service_api_test:
+    build: 
+      context: ./auth_service_api
+      dockerfile: Dockerfile.test
+    container_name: auth_service_api_test
+    env_file: .env.test
+    environment:
+      USERS_DB_URL: ${USERS_DB_URL:-postgres://admin:admin@auth_service_postgres_test:5432/test_db?sslmode=require}
+      DEBUG: ${DEBUG:-true} # 'true' if 'true' and 'false' if DEBUG = anything else
+      API_KEY: ${API_KEY:-secret}
+      JWT_SECRET: ${JWT_SECRET:-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-refresh}
+      # SESSION_SECRET must be 16, 24 or 32 bytes string
+      SESSION_SECRET: ${SESSION_SECRET:-sesssesssesssess}
+      CERTIFICATE_KEY_LOC: ${CERTIFICATE_KEY_LOC:-/certificates/dev_private_key.pem}
+      CERTIFICATE_FILE_LOC: ${CERTIFICATE_FILE_LOC:-/certificates/dev_certificate.pem}
+    command: ["go", "test", "-v", "./..."]
+    depends_on:
+      auth_service_postgres_test:
+        condition:
+          service_healthy
+
+  auth_service_postgres_test:
+    build: ./auth_service_postgres
+    container_name: auth_service_postgres_test
+    env_file: .env.test
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
+      POSTGRES_DB: test_db
+    volumes:
+      - ./auth_service_postgres/test_init.sql:/docker-entrypoint-initdb.d/config.sql
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "admin", "-d", "test_db"]
+      interval: 2s
+      timeout: 1s
+      retries: 5
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
