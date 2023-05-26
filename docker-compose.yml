@@ -3,31 +3,40 @@ version: '3.8'
 services:
 
   auth_service_api:
-    build: .
+    build: ./auth_service_api
+    container_name: auth_service_api
     env_file: .env
     environment:
-      USERS_DB_URL: ${USERS_DB_URL:-postgres://admin:admin@auth_service_postgres:5432/users_db?sslmode=disable}
+      USERS_DB_URL: ${USERS_DB_URL:-postgres://admin:admin@auth_service_postgres:5432/users_db?sslmode=require}
+      DEBUG: ${DEBUG:-true} # 'true' or anything else
+      API_KEY: ${API_KEY:-secret}
+      JWT_SECRET: ${JWT_SECRET:-secret}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-refresh}
+      SESSION_SECRET: ${SESSION_SECRET:-sesssesssesssess}
+      CERTIFICATE_KEY_LOC: ${CERTIFICATE_KEY_LOC:-/certificates/dev_private_key.pem}
+      CERTIFICATE_FILE_LOC: ${CERTIFICATE_FILE_LOC:-/certificates/dev_certificate.pem}
     ports:
       - "8080:8080"
     depends_on:
-      auth_db:
+      auth_service_postgres:
         condition:
           service_healthy
 
-  auth_db:
-    image: postgres:latest
+  auth_service_postgres:
+    build: ./auth_service_postgres
     container_name: auth_service_postgres
     env_file: .env
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin}
       POSTGRES_DB: users_db
+    volumes:
+      - ./auth_service_postgres/dev_init.sql:/docker-entrypoint-initdb.d/config.sql
     ports:
       - "5432:5432"
-    volumes:
-      - ./database/dev_init.sql:/docker-entrypoint-initdb.d/dev_init.sql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "admin", "-d", "users_db"]
       interval: 2s
       timeout: 1s
       retries: 5
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
