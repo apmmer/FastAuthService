@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
+
 # Copying the certificate and key from the certificate directory
+# to avoid any kind of access conflicts (if there are volumes etc.)
 echo "ENTRYPOINT: Copying certificates..."
 cp /var/lib/postgresql/certificates/server.crt /var/lib/postgresql/server.crt
 cp /var/lib/postgresql/certificates/server.key /var/lib/postgresql/server.key
@@ -13,4 +15,6 @@ echo "ENTRYPOINT: Setting user-postgres..."
 chown postgres:postgres /var/lib/postgresql/server.key
 chown postgres:postgres /var/lib/postgresql/server.crt
 echo "ENTRYPOINT: Executing command..."
+
+# Calling standard docker-entrypoint.sh
 exec docker-entrypoint.sh postgres
