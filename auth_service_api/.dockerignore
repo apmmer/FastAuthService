@@ -1,0 +1,19 @@
+# Ignore git directory
+.git
+
+# Ignore .exe files
+*.exe
+
+# Ignore unnecessary files
+.dockerignore
+*.log
+
+# Private files
+.env
+
+# Trash files
+trash/
+
+# Other dev files
+info.dev
+calculator.*
