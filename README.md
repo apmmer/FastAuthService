@@ -38,10 +38,7 @@ To run the service, follow these steps:
     ```bash
     git clone https://github.com/vik-backend/FastAuthService.git
     ```
- 2. Navigate to the project directory:  
-    ```bash
-    cd ../AuthService
-    ```
+ 2. Navigate to the project directory.  
  3. Ensure [**Docker**](https://www.docker.com/) engine is running in your system.  
  4. Run the following command to start the service:
     ```bash
