@@ -12,6 +12,7 @@ services:
       API_KEY: ${API_KEY:-secret}
       JWT_SECRET: ${JWT_SECRET:-secret}
       JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET:-refresh}
+      # SESSION_SECRET must be 16, 24 or 32 bytes string
       SESSION_SECRET: ${SESSION_SECRET:-sesssesssesssess}
       CERTIFICATE_KEY_LOC: ${CERTIFICATE_KEY_LOC:-/certificates/dev_private_key.pem}
       CERTIFICATE_FILE_LOC: ${CERTIFICATE_FILE_LOC:-/certificates/dev_certificate.pem}

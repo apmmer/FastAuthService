@@ -1,0 +1,15 @@
+# We're using the same base image
+FROM golang:1.20 as builder
+
+WORKDIR /app
+
+# Copying files and downloading dependencies is the same
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+COPY . .
+
+# Instead of building an application, we're running tests
+RUN go test -v ./...
+
+# Note: we don't need a second stage, since we're not building an executable

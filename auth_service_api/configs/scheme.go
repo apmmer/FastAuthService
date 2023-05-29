@@ -10,7 +10,7 @@ type MainSettingsScheme struct {
 	ApiKey                  string // API key for service access
 	JwtSecret               string // Secret for signing JWT tokens
 	JwtRefreshSecret        string // Secret for signing JWT refresh tokens
-	SessionSecret           string // Secret for encrypting session data
+	SessionSecret           string // Secret for encrypting session data, must be 16, 24 or 32 bytes string
 	TokenLifeMinutes        int    // Lifetime of JWT token in minutes
 	RefreshTokenLifeMinutes int    // Lifetime of JWT refresh token in minutes
 	SecureCookies           bool   // Flag for enabling secure flag in cookies
