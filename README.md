@@ -17,7 +17,7 @@ FastAuthService provides a robust API for user registration, authentication, and
 - **Protection Against Web Vulnerabilities**: Safeguards in place to prevent XSS attacks and SQL injections.
 - **Well-Structured Project**: The project adheres to best practices in code organization and module separation.
 - **Fully Documented Code**: All classes, methods, and functions are documented.
-- **Comprehensive Package Documentation**: All packages have README files that explain their purpose, structure, and usage.
+- **Comprehensive Package Documentation**: All packages have *doc.go* file that explain their purpose, structure, and usage.
 
 ### To Do :construction:
 
@@ -28,15 +28,22 @@ FastAuthService provides a robust API for user registration, authentication, and
 - Tests coverage at all levels
 - Code review and refactor for improved maintainability
 - Continuous integration and deployment setup
-- Automated end-to-end testing
 - Increase logging and observability
 
 Stay tuned for upcoming updates!
   
-## How to run service  
- - Clone project by `git clone https://github.com/vik-backend/FastAuthService.git`.  
- - Create a file **"./AuthService/.env"** and use it to set up environment.  
- - Ensure **CERTIFICATE_KEY_LOC** and **CERTIFICATE_FILE_LOC** are valid in your environment. Create sertificate and key if necessary and put them somewhere, then provide those paths in env.  
- - Ensure [**Docker**](https://www.docker.com/) engine is running in your system.  
- - Execute command `docker-compose up --build` from project **"./AuthService/"** (root) directory, where **docker-compose.yml** is located.  
-  
+## Running the Service  
+To run the service, follow these steps:  
+ 1. Clone the project using:
+    ```bash
+    git clone https://github.com/vik-backend/FastAuthService.git
+    ```
+ 2. Navigate to the project directory:  
+    ```bash
+    cd ../AuthService
+    ```
+ 3. Ensure [**Docker**](https://www.docker.com/) engine is running in your system.  
+ 4. Run the following command to start the service:
+    ```bash
+    docker-compose up --build
+    ```
