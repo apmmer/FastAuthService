@@ -16,8 +16,8 @@ FastAuthService provides a robust API for user registration, authentication, and
 - **No Database Frameworks**: Does not rely on database frameworks, thus reducing potential attack vectors. Optimized DB requests.
 - **Protection Against Web Vulnerabilities**: Safeguards in place to prevent XSS attacks and SQL injections.
 - **Well-Structured Project**: The project adheres to best practices in code organization and module separation.
-- **Fully Documented Code**: All classes, methods, and functions are documented.
-- **Comprehensive Package Documentation**: All packages have *doc.go* file that explain their purpose, structure, and usage.
+- **Fully Documented Code**: All classes, methods, functions are documented.
+- **Comprehensive Package Documentation**: All packages have *doc.go* file that explain their purpose, structure or usage.
 
 ### To Do :construction:
 
