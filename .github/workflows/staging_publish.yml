@@ -1,0 +1,35 @@
+name: Docker Publish
+
+on:
+  release:
+    branches:
+      - develop
+    types: [published]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Explicit configuration of AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.GO_ADMIN_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.GO_ADMIN_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.GO_ADMIN_AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/auth-service-api:${{ github.ref_name }}
+          file: ./auth_service_api/Dockerfile
