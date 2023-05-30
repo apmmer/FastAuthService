@@ -1,13 +1,14 @@
 name: Run tests
 
+
 on:
+  # As push to main is unexpected we also add tests here
   push:
     branches:
       - main
-      - develop
+  # workflow is "any branch" -> "develop" (staging) -> "main" -> release to prod.
   pull_request:
     branches:
-      - main
       - develop
     types: [opened, reopened, edited, synchronize]
 
