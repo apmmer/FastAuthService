@@ -1,29 +1,29 @@
-# name: Run tests
+name: Run tests
 
 
-# on:
-#   # As push to main is unexpected we also add tests here
-#   push:
-#     branches:
-#       - main
-#   # workflow is "any branch" -> "develop" (staging) -> "main" -> release to prod.
-#   pull_request:
-#     branches:
-#       - develop
-#     types: [opened, reopened, edited, synchronize]
+on:
+  # As push to main is unexpected we also add tests here
+  push:
+    branches:
+      - main
+  # workflow is "any branch" -> "develop" (staging) -> "main" -> release to prod.
+  pull_request:
+    branches:
+      - develop
+    types: [opened, reopened, edited, synchronize]
 
-# jobs:
-#   test:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: Clone code
-#         uses: actions/checkout@v3
-#         with:
-#           fetch-depth: 1
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-#       - name: Run tests
-#         run: |
-#           docker-compose -f docker-compose.test.yml up --build --exit-code-from auth_service_api_test
+      - name: Run tests
+        run: |
+          docker-compose -f docker-compose.test.yml up --build --exit-code-from auth_service_api_test

@@ -29,6 +29,7 @@ FastAuthService provides a robust API for user registration, authentication, and
 - Code review and refactor for improved maintainability
 - Continuous integration and deployment setup
 - Increase logging and observability
+- Advanced CI and prod CD
 
 Stay tuned for upcoming updates!
   
@@ -44,3 +45,14 @@ To run the service, follow these steps:
     ```bash
     docker-compose up --build
     ```
+
+## Development and Deployment Workflow :arrow_forward:
+
+The workflow for feature development and deployment in this project follows these steps:
+
+1. **Feature Branch Creation**: A separate branch is created for each feature.
+2. **Pull Request (PR) to Develop**: After the development is completed, a PR is opened into the `develop` branch. Upon PR creation, automated tests are run.
+3. **Release and Staging**: When a new release is ready, it is tagged in the format "**v*.*.***". The tagged code is then automatically pushed to the staging environment on AWS.
+4. **Pull Request to Main and Production Deployment**: If everything works fine on the staging environment, a PR is opened into the `main` branch. After merging into `main`, the project is automatically pushed to the production environment with the same tag that was last in the `develop` branch.
+
+This process ensures consistent, test-driven development and seamless transitions between development, staging, and production environments.
