@@ -29,6 +29,7 @@ FastAuthService provides a robust API for user registration, authentication, and
 - Code review and refactor for improved maintainability
 - Continuous integration and deployment setup
 - Increase logging and observability
+- Advanced CI and prod CD
 
 Stay tuned for upcoming updates!
   
