@@ -1,8 +1,12 @@
 # FastAuthService
-FastAuthService is a high-performance microservice designed for user authentication and management.
+FastAuthService is an aspiring high-performance microservice project, designed for user authentication and management.
 
 ## Overview
-FastAuthService provides a robust API for user registration, authentication, and account management. It employs advanced encryption and hashing methods to ensure secure storage and processing of user credentials.
+As a part of a larger project, FastAuthService is intended to serve as a robust microservice that will be accessed via a gateway. Kubernetes is planned to be used for organizing these microservices. The service aims to provide a robust API for user registration, authentication, and account management, while utilizing advanced encryption and hashing methods for secure storage and processing of user credentials.
+
+FastAuthService is designed with reusability in mind and can serve as a frame or template for authentication services in many microservices-based projects. This could be particularly useful for those who prefer not to rely on external services like Keycloak for authentication.
+
+The project is currently under active development, and contributions are welcome.
 
 ## Project Status
 
@@ -25,6 +29,7 @@ FastAuthService provides a robust API for user registration, authentication, and
 - Caching
 - Monitoring
 - More functionality for users administration
+- Google auth
 - Tests coverage at all levels
 - Code review and refactor for improved maintainability
 - Continuous integration and deployment setup
