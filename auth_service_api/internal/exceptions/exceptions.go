@@ -55,6 +55,7 @@ func MakeInvalidEntityError(message string) *DefaultError {
 	}
 }
 
+// MakeDbConflictError is used to create an error, when there is a conflict in db, like FKey exception etc.
 func MakeDbConflictError(message string) *DefaultError {
 	if message == "" {
 		message = "Conflict error: can not create/modify db record."
@@ -65,6 +66,7 @@ func MakeDbConflictError(message string) *DefaultError {
 	}
 }
 
+// MakeNoAuthDataError is used to create an error, when there is an auth required and no auth data provided.
 func MakeNoAuthDataError(message string) *DefaultError {
 	if message == "" {
 		message = "Authentication data was not provided or can not be parsed."
@@ -75,6 +77,8 @@ func MakeNoAuthDataError(message string) *DefaultError {
 	}
 }
 
+// MakeUnauthorizedError is used to create an error, when there is an auth required,
+// auth data was provided, but is invalid.
 func MakeUnauthorizedError(message string) *DefaultError {
 	if message == "" {
 		message = "Authentication data is invalid."
@@ -85,6 +89,9 @@ func MakeUnauthorizedError(message string) *DefaultError {
 	}
 }
 
+// MakeValidationError is used to create an error, when data can not be validated somewhere in the internal code.
+// for example, when the data successfully passed the handler, getting into the repository,
+// where it turned out that it was impossible to create an instance of the model or something similar.
 func MakeValidationError(message string) *DefaultError {
 	if message == "" {
 		message = "Validation for data was failed."

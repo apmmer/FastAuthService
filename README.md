@@ -4,7 +4,7 @@ FastAuthService is an aspiring high-performance microservice project, designed f
 ## Overview
 As a part of a larger project, FastAuthService is intended to serve as a robust microservice that will be accessed via a gateway. Kubernetes is planned to be used for organizing these microservices. The service aims to provide a robust API for user registration, authentication, and account management, while utilizing advanced encryption and hashing methods for secure storage and processing of user credentials.
 
-FastAuthService is designed with reusability in mind and can serve as a frame or template for authentication services in many microservices-based projects. This could be particularly useful for those who prefer not to rely on external services like Keycloak for authentication.
+FastAuthService is designed with reusability in mind and can serve as a frame or template for authentication services in other microservices-based projects. This could be particularly useful for those who prefer not to rely on external services like Keycloak for authentication.
 
 The project is currently under active development, and contributions are welcome.
 
@@ -17,7 +17,7 @@ The project is currently under active development, and contributions are welcome
 - **Dynamic Browser Data Usage**: Leverages IP and UserAgent data.
 - **Advanced Token Management**: Provides robust mechanisms for token creation, verification, and update with multiple additional validators.
 - **Secure Communication**: Employs TLS for API and database connections.
-- **No Database Frameworks**: Does not rely on database frameworks, thus reducing potential attack vectors. Optimized DB requests.
+- **No Database Frameworks**: Does not rely on database frameworks. Optimized DB requests.
 - **Protection Against Web Vulnerabilities**: Safeguards in place to prevent XSS attacks and SQL injections.
 - **Well-Structured Project**: The project adheres to best practices in code organization and module separation.
 - **Fully Documented Code**: All classes, methods, functions are documented.
