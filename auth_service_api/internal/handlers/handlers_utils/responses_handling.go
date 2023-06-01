@@ -7,7 +7,8 @@ import (
 	"reflect"
 )
 
-// HandleJsonResponse converts object to a json server response
+// HandleJsonResponse converts object to a json server response and
+// writes a response via http.ResponseWriter
 func HandleJsonResponse(w http.ResponseWriter, data interface{}) error {
 	w.Header().Set("Content-Type", "application/json")
 	v := reflect.ValueOf(data)
