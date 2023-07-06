@@ -5,7 +5,7 @@ version: '3.8'
 services:
 
   auth_service_api_test:
-    build: 
+    build:
       context: ./auth_service_api
       dockerfile: Dockerfile.test
     container_name: auth_service_api_test
@@ -20,11 +20,10 @@ services:
       SESSION_SECRET: ${SESSION_SECRET:-sesssesssesssess}
       CERTIFICATE_KEY_LOC: ${CERTIFICATE_KEY_LOC:-/certificates/dev_private_key.pem}
       CERTIFICATE_FILE_LOC: ${CERTIFICATE_FILE_LOC:-/certificates/dev_certificate.pem}
-    command: ["go", "test", "-v", "./..."]
+    command: [ "go", "test", "-v", "./..." ]
     depends_on:
       auth_service_postgres_test:
-        condition:
-          service_healthy
+        condition: service_healthy
 
   auth_service_postgres_test:
     build: ./auth_service_postgres
@@ -37,8 +36,8 @@ services:
     volumes:
       - ./auth_service_postgres/test_init.sql:/docker-entrypoint-initdb.d/config.sql
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "admin", "-d", "test_db"]
+      test: [ "CMD", "pg_isready", "-U", "admin", "-d", "test_db" ]
       interval: 2s
       timeout: 1s
       retries: 5
-    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
