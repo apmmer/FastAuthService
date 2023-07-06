@@ -20,8 +20,7 @@ services:
       - "8080:8080"
     depends_on:
       auth_service_postgres:
-        condition:
-          service_healthy
+        condition: service_healthy
 
   auth_service_postgres:
     build: ./auth_service_postgres
@@ -36,8 +35,16 @@ services:
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "admin", "-d", "users_db"]
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-U",
+          "admin",
+          "-d",
+          "users_db"
+        ]
       interval: 2s
       timeout: 1s
       retries: 5
-    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
